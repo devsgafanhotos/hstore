@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="gauge" style="width: 400px; height: 250px"></div>
+
+        <div id="line" style="width: 400px; height: 250px"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script>
+            const gauge = echarts.init(document.getElementById("gauge"));
+            gauge.setOption({
+                series: [
+                    {
+                        type: "gauge",
+                        min: 0,
+                        max: 50,
+                        progress: { show: true },
+                        detail: {
+                            valueAnimation: true,
+                            formatter: "{value} °C",
+                        },
+                        data: [{ value: 28.9 }],
+                    },
+                ],
+            });
+
+            const line = echarts.init(document.getElementById("line"));
+            line.setOption({
+                xAxis: {
+                    type: "category",
+                    data: [
+                        "20:00",
+                        "21:00",
+                        "22:00",
+                        "23:00",
+                        "00:00",
+                        "01:00",
+                        "02:00",
+                        "02:00",
+                    ],
+                },
+                yAxis: {
+                    type: "value",
+                    data: [29.3, 14.3, 29.3, 29.3, 29.2, 29.1, 20.9],
+                },
+                series: [
+                    {
+                        type: "line",
+                        smooth: true,
+                        data: [29.3, 14.3, 29.3, 29.3, 29.2, 29.1, 20.9, 35],
+                    },
+                ],
+            });
+        </script>
+    </body>
+</html>

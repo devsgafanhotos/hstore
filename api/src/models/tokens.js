@@ -1,0 +1,39 @@
+import Sequelize from "sequelize";
+export default function tokens(sequelize, DataTypes) {
+    return sequelize.define(
+        "tokens",
+        {
+            id: {
+                autoIncrement: true,
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                primaryKey: true,
+            },
+            id_usuario: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                references: {
+                    model: "usuarios",
+                    key: "id_usuario",
+                },
+            },
+            refresh_token: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+        },
+        {
+            sequelize,
+            tableName: "tokens",
+            schema: "public",
+            timestamps: false,
+            indexes: [
+                {
+                    name: "tokens_pkey",
+                    unique: true,
+                    fields: [{ name: "id" }],
+                },
+            ],
+        }
+    );
+}

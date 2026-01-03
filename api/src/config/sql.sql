@@ -1,0 +1,87 @@
+CREATE DATABASE hstoredb;
+\c hstoredb;
+
+-- =========================
+-- ENUMS
+-- =========================
+CREATE TYPE estado_faturacao AS ENUM ('Pendente', 'Pago');
+CREATE TYPE tipo_faturacao AS ENUM ('Fisico', 'Eletronico');
+CREATE TYPE forma_pagamento AS ENUM ('Quinzenal', 'Mensal');
+CREATE TYPE parcela_tipo AS ENUM ('Primeira', 'Segunda', 'Unica');
+
+-- =========================
+-- Tabela Usuarios
+-- =========================
+CREATE TABLE IF NOT EXISTS usuarios (
+    id_usuario INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome VARCHAR(45) NOT NULL,
+    telefone VARCHAR(45) NOT NULL UNIQUE,
+    email VARCHAR(45) NOT NULL UNIQUE,
+    role VARCHAR(45) NOT NULL,
+    senha TEXT NOT NULL,
+    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ultima_actualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(45) NOT NULL DEFAULT 'Ativo'
+);
+
+-- =========================
+-- Tabela Agentes
+-- =========================
+CREATE TABLE IF NOT EXISTS agentes (
+    id_agente INT PRIMARY KEY,
+    telefone VARCHAR(45) NOT NULL UNIQUE,
+    nome VARCHAR(45) NOT NULL,
+    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(45) NOT NULL DEFAULT 'Ativo',
+    ultima_actualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    usuario_id INT NOT NULL,
+    CONSTRAINT fk_agente_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios (id_usuario)
+        ON DELETE CASCADE
+);
+
+-- =========================
+-- Tabela Faturacoes
+-- =========================
+CREATE TABLE IF NOT EXISTS faturacoes (
+    id_facturacao INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    valor DOUBLE PRECISION NOT NULL,
+    data_faturacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ultima_actualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado estado_faturacao NOT NULL DEFAULT 'Pago',
+    tipo_faturacao tipo_faturacao NOT NULL,
+    forma_pagamento forma_pagamento NOT NULL DEFAULT 'Mensal',
+    agente_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    CONSTRAINT fk_faturacao_agente
+        FOREIGN KEY (agente_id)
+        REFERENCES agentes (id_agente)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_faturacao_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios (id_usuario)
+        ON DELETE CASCADE
+);
+
+-- =========================
+-- Tabela Pagamentos
+-- =========================
+CREATE TABLE IF NOT EXISTS pagamentos (
+    id_pagamento INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    data_pagamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_correspondente TIMESTAMP NOT NULL,
+    parcela parcela_tipo NOT NULL DEFAULT 'Unica',
+    bonus DOUBLE PRECISION NOT NULL,
+    resto DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    agente_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    CONSTRAINT fk_pagamento_agente
+        FOREIGN KEY (agente_id)
+        REFERENCES agentes (id_agente)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_pagamento_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios (id_usuario)
+        ON DELETE CASCADE
+);

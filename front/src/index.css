@@ -1,68 +1,65 @@
+@import "tailwindcss";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* =========================
+   PALETA H-STORE / UNITEL
+   ========================= */
+
+/* MODO CLARO */
+:root {
+    --color-primary: #f7941e;
+    --color-primary-light: #f7941ecb;
+    /* Laranja principal */
+    --color-primary-strong: #FF7A00;
+    /* Laranja mais vibrante */
+    --color-secondary: #4B1E78;
+    /* Azul corporativo */
+
+    --color-gray: #f0f0f0;
+    --color-gray-light: #CFCFCF;
+
+    --color-text: #1B2B4C;
+    --color-bg: #FFFFFF;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+* {
+    box-sizing: border-box;
+}
+/* MODO ESCURO
+.dark,
+[data-theme="dark"] {
+    --color-primary: #FF7A00;
+    --color-primary-strong: #F36F21;
+    --color-brand-blue: #E6E9F5;
+
+    --color-gray: #A0A0A0;
+    --color-gray-light: #5A5A5A;
+
+    --color-text: #FFFFFF;
+    --color-bg: #0F172A;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+/* OPCIONAL (ativação automática por sistema) 
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-primary: #FF7A00;
+        --color-primary-strong: #F36F21;
+        --color-brand-blue: #E6E9F5;
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+        --color-gray: #A0A0A0;
+        --color-gray-light: #5A5A5A;
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+        --color-text: #FFFFFF;
+        --color-bg: #0F172A;
+    }
+} */

@@ -100,7 +100,7 @@ class ClassUserControllers {
                     status: 400,
                     success: false,
                     message: "Sua sessão expitou faça login...",
-                    refresh_token: refresh_token
+                    refresh_token: "refresh_token: "+refresh_token
                 });
             }
 

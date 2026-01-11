@@ -1,5 +1,5 @@
 import "./index.css";
-import AppRouter from "./partials/AppRouter";
+import AppRouter from "./partials/routes/AppRouter";
 import AlertProvider from "./providers/AlertProvider";
 import AuthProvider from "./providers/AuthProvider";
 import AuthGate from "./gates/AuthGate";

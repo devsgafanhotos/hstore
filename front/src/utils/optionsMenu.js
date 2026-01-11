@@ -3,36 +3,31 @@ export const optionsMenu = {
         {
             titulo: "Relatórios",
             link: "/relatorios",
-            descricao:
-                "Visualização de relatorios.",
+            descricao: "Visualização de relatorios.",
             icone: "relatorios",
         },
         {
             titulo: "Pagamentos",
             link: "/pagamentos",
-            descricao:
-                "Visualização depagamentos.",
+            descricao: "Visualização depagamentos.",
             icone: "pagamentos",
         },
         {
             titulo: "Faturações",
             link: "/faturacoes",
-            descricao:
-                "Visualização de faturacoes.",
+            descricao: "Visualização de faturacoes.",
             icone: "faturacoes",
         },
         {
             titulo: "Sub-agentes",
             link: "/Subagentes",
-            descricao:
-                "Visualização de subAgentes.",
+            descricao: "Visualização de subAgentes.",
             icone: "subAgentes",
         },
         {
             titulo: "Usuários",
             link: "/usuarios",
-            descricao:
-                "Visualização de usuarios.",
+            descricao: "Visualização de usuarios.",
             icone: "usuariosCadastrados",
         },
     ],
@@ -40,16 +35,27 @@ export const optionsMenu = {
         {
             titulo: "Meu Perfil",
             link: "/perfil",
-            descricao:
-                "Visualização do perfil de usuario.",
+            descricao: "Visualização do perfil de usuario.",
             icone: "nome",
         },
         {
             titulo: "Sair",
             link: "/logout",
-            descricao:
-                "Sair da plataforma.",
+            descricao: "Sair da plataforma.",
             icone: "sair",
-        }
+        },
+    ],
+    public: [
+        {
+            titulo: "Home",
+            link: "/home",
+            descricao: "Home page.",
+            icone: "home",
+        },{
+            titulo: "Entrar",
+            link: "/login",
+            descricao: "Entrar na plataforma.",
+            icone: "entrar",
+        },
     ],
 };

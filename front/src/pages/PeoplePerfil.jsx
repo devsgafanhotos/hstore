@@ -1,4 +1,5 @@
 import {
+    Box,
     List,
     ListItem,
     ListItemButton,
@@ -14,6 +15,8 @@ import { useParams } from "react-router-dom";
 import AppLoader from "../components/feedback/AppLoader";
 import { api } from "../api/axios";
 import { FaQuestionCircle } from "react-icons/fa";
+import MyLinkButton from "../components/form/MyLinkButton";
+import MyButton from "../components/form/MyButton";
 
 export default function PeoplePerfil({ type = "Usuarios" }) {
     const { user } = useAuth();
@@ -43,13 +46,14 @@ export default function PeoplePerfil({ type = "Usuarios" }) {
     }
 
     useEffect(() => {
-        if (type) {
+        setPageState("loading");
+        if (id_usuario || id_agente) {
             getPeople();
         } else {
             setPeoplePerfil(user);
             setPageState("done");
         }
-    }, []);
+    }, [type, id_usuario, id_agente]);
 
     if (pageState === "loading") {
         return (
@@ -60,22 +64,52 @@ export default function PeoplePerfil({ type = "Usuarios" }) {
         );
     }
 
-    let perfilObject = { keys: [], values: [] };
     let formDelete;
 
     if (peoplePerfil) {
-        perfilObject.keys = Object.keys(peoplePerfil).map((key) => {
-            return key[0].charAt(0).toUpperCase() + key.slice(1);
-        });
-        perfilObject.values = Object.values(peoplePerfil).map((value) => value);
         formDelete = "Excluir perfil";
+    }
+
+    function ListPeople({}) {
+        return (
+            <List sx={{ padding: 0, margin: 0 }}>
+                {Object.keys(peoplePerfil).map((key) => {
+                    if (key === "nome") return;
+                    
+                    const Icon = iconMapper[key];
+                    
+                    return (
+                        <ListItem sx={{ p: 0, marginBottom: "2px" }} key={key}>
+                            <ListItemButton sx={{ borderRadius: 2 }}>
+                                <ListItemIcon>
+                                    <Icon
+                                        size={20}
+                                        className="text-(--color-secondary)"
+                                    />
+                                </ListItemIcon>
+                                <div className="-ml-5">
+                                    <p>{key.charAt(0).toUpperCase() + key.slice(1)}</p>
+                                    <ListItemText
+                                        sx={{ margin: 0 }}
+                                        primary={peoplePerfil[key]}
+                                    />
+                                </div>
+                            </ListItemButton>
+                        </ListItem>
+                    );
+                })}
+            </List>
+        );
     }
 
     return (
         <div className="flex-1 " style={{ margin: 0, padding: 0 }}>
             <div className="flex-auto flex relative justify-center mt-2">
-                <div className="rounded-full w-30 h-30 flex justify-center items-center text-7xl bg-(--color-primary) text-(--color-gray) mt-4 mb-2">
-                    {peoplePerfil?.nome[0] || <FaQuestionCircle />}
+                <div className="flex justify-center items-center flex-col">
+                    <div className="rounded-full w-30 h-30 flex justify-center items-center text-7xl bg-(--color-primary) text-(--color-gray) mt-2 mb-1">
+                        {peoplePerfil?.nome[0] || <FaQuestionCircle />}
+                    </div>
+                    <Typography variant="h5">{peoplePerfil?.nome}</Typography>
                 </div>
                 <div className="absolute right-0">
                     <MiniMenu
@@ -84,47 +118,33 @@ export default function PeoplePerfil({ type = "Usuarios" }) {
                     />
                 </div>
             </div>
-            <div className="flex justify-center mt-8">
-                <List sx={{ padding: 0, margin: 0 }}>
-                    {peoplePerfil ? (
-                        <PeoplePerfilItem
-                            values={perfilObject.values}
-                            keys={perfilObject.keys}
-                        />
-                    ) : (
-                        <Typography variant="h5">Perfil inexistente...</Typography>
-                    )}
-                </List>
+            <div className="flex flex-col items-center justify-center mt-3">
+                {peoplePerfil ? (
+                    <ListPeople />
+                ) : (
+                    <Typography variant="h5">Perfil inexistente...</Typography>
+                )}
+                <Actions type={type} />
             </div>
         </div>
     );
 }
 
-export function PeoplePerfilItem({ values, keys }) {
+function Actions({ type }) {
+    if (type === "Usuarios") return;
     return (
-        <>
-            {values.map((value, index) => {
-                const Icon = iconMapper[keys[index].toLowerCase()];
-                return (
-                    <ListItem sx={{ p: 0, marginBottom: "2px" }} key={keys}>
-                        <ListItemButton sx={{ borderRadius: 2 }}>
-                            <ListItemIcon>
-                                <Icon
-                                    size={20}
-                                    className="text-(--color-secondary)"
-                                />
-                            </ListItemIcon>
-                            <div className="-ml-5">
-                                <p>{keys[index]}</p>
-                                <ListItemText
-                                    sx={{ margin: 0 }}
-                                    primary={value}
-                                />
-                            </div>
-                        </ListItemButton>
-                    </ListItem>
-                );
-            })}
-        </>
+        <Box
+            py={2}
+            display={"flex"}
+            flexWrap={"wrap"}
+            justifyContent={"center"}
+            gap={2}
+        >
+            <MyButton to={"/nova"} title={"Nova Faturação"}>
+                Nova Faturação
+            </MyButton>
+            <MyLinkButton to={"/nova"} title={"Relatório Mensal"} />
+            <MyLinkButton to={"/nova"} title={"Ver Historico"} />
+        </Box>
     );
 }

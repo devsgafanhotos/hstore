@@ -3,10 +3,10 @@ import initModels from "../models/init-models.js";
 import env from "./env.js";
 
 const sequelize = new Sequelize(env.database_url, {
-    dialect: "postgres",
+    dialect: "mysql",
     dialectOptions: {
         ssl: {
-            require: true,
+            require: false,
             rejectUnauthorized: false, // ignora certificado autoassinado
         },
     },
@@ -16,9 +16,10 @@ const sequelize = new Sequelize(env.database_url, {
 export async function connectDB() {
     try {
         await sequelize.authenticate();
-        console.log("📦 Conectado ao PostgreSQL com sucesso.");
+        console.log("📦 Conectado ao MySQL com sucesso.");
     } catch (error) {
         console.error("❌ Erro na conexão com o banco:", error.message);
+        console.log(error);
         process.exit(1);
     }
 }

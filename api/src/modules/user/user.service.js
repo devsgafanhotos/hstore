@@ -43,7 +43,7 @@ class classUserServices {
             nome: usuario.nome,
             telefone: usuario.telefone,
             email: usuario.email,
-            role: usuario.role,
+            tipo: usuario.role,
             senha: senhaHash,
         });
 
@@ -61,18 +61,20 @@ class classUserServices {
     }
 
     async login(credencials, res) {
-        const responseEmail = await this.verifyUserEmail(credencials?.email);
+        const responseTelefone = await this.verifyUserTelefone(
+            credencials?.telefone
+        );
 
-        if (!responseEmail.success) {
+        if (!responseTelefone.success) {
             return {
                 success: false,
                 status: 404,
-                message: "Email inexistente!",
+                message: "Telefone inexistente!",
             };
         }
 
         const responseSenha = await this.verifyHash(
-            responseEmail.data.senha,
+            responseTelefone.data.senha,
             credencials.senha
         );
 
@@ -85,11 +87,12 @@ class classUserServices {
         }
 
         const payload = {
-            id: responseEmail.data.id_usuario,
-            email: responseEmail.data.email,
-            nome: responseEmail.data.nome,
-            telefone: responseEmail.data.telefone,
-            role: responseEmail.data.role,
+            id: responseTelefone.data.id_usuario,
+            email: responseTelefone.data.email,
+            nome: responseTelefone.data.nome,
+            telefone: responseTelefone.data.telefone,
+            role: responseTelefone.data.tipo,
+            dataCadastro: responseTelefone.data.data_criacao,
         };
 
         const ACCESS_TOKEN = await this.createToken(
@@ -105,7 +108,7 @@ class classUserServices {
         );
 
         token_model.create({
-            id_usuario: responseEmail.data.id_usuario,
+            usuario_id: responseTelefone.data.id_usuario,
             refresh_token: REFRESH_TOKEN,
         });
 
@@ -153,10 +156,11 @@ class classUserServices {
                 "nome",
                 "telefone",
                 "email",
-                "role",
+                ["tipo", "role"],
                 ["data_criacao", "dataCadastro"],
             ],
             where: idCondition,
+            order: ["nome"],
         });
 
         if (!usuarios_encontrados) {
@@ -177,6 +181,7 @@ class classUserServices {
             where: {
                 email: email,
             },
+            raw: true,
         });
 
         if (!usuario_encontrado) {
@@ -196,6 +201,7 @@ class classUserServices {
             where: {
                 telefone: telefone,
             },
+            raw: true,
         });
 
         if (!usuario_encontrado) {

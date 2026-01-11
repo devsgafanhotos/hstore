@@ -7,7 +7,7 @@ class ClassAgentsControllers {
 
             const response = await AgentsServices.cadastrar({
                 ...agente,
-                usuario_id: 1 //req.user.id,
+                usuario_id: req.user.id,
             });
 
             // Em caso de insucesso

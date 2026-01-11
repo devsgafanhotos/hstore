@@ -1,4 +1,3 @@
-import { Card, Container, Typography } from "@mui/material";
 import { useState } from "react";
 import AppLoader from "../components/feedback/AppLoader";
 import MyButton from "../components/form/MyButton";
@@ -6,15 +5,14 @@ import { useAlert } from "../hooks/useAlert";
 import { useAuth } from "../hooks/useAuth";
 import MyInput from "../components/form/MyInput";
 import { Navigate } from "react-router-dom";
-import { CardHeader } from "./PeopleList";
 import { api } from "../api/axios";
+import MyCard, { MyCardContent, MyCardHeader } from "../components/card/Card";
 
 const OptionsInitialPeople = {
     Usuarios: {
         email: "",
         telefone: "",
         nome: "",
-
         role: "",
     },
     Subagentes: {
@@ -44,7 +42,6 @@ export default function NewPeople({ type = "Usuarios" }) {
             ? !newPeople.nome ||
               !newPeople.telefone ||
               !newPeople.email ||
-              !newPeople.role ||
               formState === "loading"
             : !newPeople.id_agente ||
               !newPeople.telefone ||
@@ -116,14 +113,13 @@ export default function NewPeople({ type = "Usuarios" }) {
             className="flex-1 flex justify-center items-center"
             onSubmit={handleSubmit}
         >
-            <Card
-                elevation={3}
+            <MyCard
                 sx={{ width: { xs: 320, sm: 450 }, borderRadius: "9px" }}
             >
-                <CardHeader>
+                <MyCardHeader>
                     <p>Cadastrar {type.slice(0, -1)}</p>
-                </CardHeader>
-                <Container sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
+                </MyCardHeader>
+                <MyCardContent sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
                     {Object.keys(initialPeople).map((key) => {
                         return (
                             <MyInput
@@ -134,7 +130,6 @@ export default function NewPeople({ type = "Usuarios" }) {
                                 }
                                 type={typeMapper[key]}
                                 name={key}
-                                //value={credencials.email}
                                 handleChangeInput={(e) => {
                                     handleChangeInput(e);
                                 }}
@@ -142,11 +137,11 @@ export default function NewPeople({ type = "Usuarios" }) {
                         );
                     })}
 
-                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled}>
+                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled} type={"submit"}>
                         {titleButton}
                     </MyButton>
-                </Container>
-            </Card>
+                </MyCardContent>
+            </MyCard>
         </form>
     );
 }

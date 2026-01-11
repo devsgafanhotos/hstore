@@ -25,11 +25,8 @@ export default function initModels(sequelize) {
         as: "pagamentos",
         foreignKey: "usuario_id",
     });
-    tokens.belongsTo(usuarios, {
-        as: "id_usuario_usuario",
-        foreignKey: "id_usuario",
-    });
-    usuarios.hasMany(tokens, { as: "tokens", foreignKey: "id_usuario" });
+    tokens.belongsTo(usuarios, { as: "usuario", foreignKey: "usuario_id" });
+    usuarios.hasMany(tokens, { as: "tokens", foreignKey: "usuario_id" });
 
     return {
         agentes,

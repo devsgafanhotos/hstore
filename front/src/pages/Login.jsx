@@ -6,19 +6,19 @@ import { useAlert } from "../hooks/useAlert";
 import { useAuth } from "../hooks/useAuth";
 import MyInput from "../components/form/MyInput";
 import { Navigate } from "react-router-dom";
-import { CardHeader } from "./PeopleList";
+import MyCard, { MyCardContent, MyCardHeader } from "../components/card/Card";
 
 export default function Login({}) {
     const { login, user } = useAuth();
     const { setAlert } = useAlert();
 
     const [credencials, setCredencials] = useState({
-        email: "",
+        telefone: "",
         senha: "",
     });
     const [formState, setFormState] = useState("typing");
     const formDisabled =
-        !credencials.email || !credencials.senha || formState === "loading";
+        !credencials.telefone || !credencials.senha || formState === "loading";
     const titleButton =
         formState === "typing" ? (
             "Entrar"
@@ -76,17 +76,17 @@ export default function Login({}) {
             className="flex-1 flex justify-center items-center"
             onSubmit={handleSubmit}
         >
-            <Card elevation={3} sx={{ width: { xs: 320, sm: 450 }, borderRadius: "9px" }}>
-                <CardHeader>
+            <MyCard sx={{ width: { xs: 320, sm: 450 } }}>
+                <MyCardHeader>
                     <p>Login</p>
-                </CardHeader>
-                <Container sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
+                </MyCardHeader>
+                <MyCardContent sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
                     <MyInput
-                        id="email"
-                        label="Email"
-                        type="email"
-                        name="email"
-                        value={credencials.email}
+                        id="telefone"
+                        label="Telefone"
+                        type="tel"
+                        name="telefone"
+                        value={credencials.telefone}
                         handleChangeInput={(e) => {
                             handleChangeInput(e);
                         }}
@@ -102,11 +102,11 @@ export default function Login({}) {
                         }}
                     />
 
-                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled}>
+                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled} type={"submit"}>
                         {titleButton}
                     </MyButton>
-                </Container>
-            </Card>
+                </MyCardContent>
+            </MyCard>
         </form>
     );
 }

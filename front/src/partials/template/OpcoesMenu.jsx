@@ -22,7 +22,7 @@ import logo from "/logo.png";
 export default function OpcoesMenu({ toggleDrawer }) {
     const { user } = useAuth();
 
-    const menuOptions = optionsMenu.user;
+    const menuOptions = user ? optionsMenu.user : optionsMenu.public;
     const profileOptions = optionsMenu.profile;
 
     const handleClose = () => {

@@ -10,7 +10,7 @@ export default function AppLayout({ children }) {
 
     return (
         <div className="h-screen flex">
-            {user && <NavBar state={{ open, setOpen }} />}
+            <NavBar state={{ open, setOpen }} />
             <div className="flex-1 flex flex-col bg-(--color-gray)">
                 <header className="md:hidden">
                     <Button
@@ -23,7 +23,7 @@ export default function AppLayout({ children }) {
                         <LuMenu className="text-3xl text-(--color-secondary)" />
                     </Button>
                 </header>
-                <main className="flex-1 flex p-5 pt-2 overflow-auto">
+                <main className="flex-1 flex p-2 md:p-4 overflow-auto">
                     {children}
                 </main>
             </div>

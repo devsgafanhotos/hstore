@@ -1,75 +1,80 @@
 import Sequelize from "sequelize";
 export default function usuarios(sequelize, DataTypes) {
-    return sequelize.define(
-        "usuarios",
-        {
-            id_usuario: {
-                autoIncrement: true,
-                autoIncrementIdentity: true,
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                primaryKey: true,
-            },
-            nome: {
-                type: DataTypes.STRING(45),
-                allowNull: false,
-            },
-            telefone: {
-                type: DataTypes.STRING(45),
-                allowNull: false,
-                unique: "usuarios_telefone_key",
-            },
-            email: {
-                type: DataTypes.STRING(45),
-                allowNull: false,
-                unique: "usuarios_email_key",
-            },
-            role: {
-                type: DataTypes.STRING(45),
-                allowNull: false,
-            },
-            senha: {
-                type: DataTypes.TEXT,
-                allowNull: false,
-            },
-            data_criacao: {
-                type: DataTypes.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.Sequelize.literal("CURRENT_TIMESTAMP"),
-            },
-            ultima_actualizacao: {
-                type: DataTypes.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.Sequelize.literal("CURRENT_TIMESTAMP"),
-            },
-            estado: {
-                type: DataTypes.STRING(45),
-                allowNull: false,
-                defaultValue: "Ativo",
-            },
-        },
-        {
-            sequelize,
-            tableName: "usuarios",
-            schema: "public",
-            timestamps: false,
-            indexes: [
-                {
-                    name: "usuarios_email_key",
-                    unique: true,
-                    fields: [{ name: "email" }],
-                },
-                {
-                    name: "usuarios_pkey",
-                    unique: true,
-                    fields: [{ name: "id_usuario" }],
-                },
-                {
-                    name: "usuarios_telefone_key",
-                    unique: true,
-                    fields: [{ name: "telefone" }],
-                },
-            ],
-        }
-    );
-}
+  return sequelize.define('usuarios', {
+    id_usuario: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
+    nome: {
+      type: DataTypes.STRING(45),
+      allowNull: false
+    },
+    telefone: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+      unique: "telefone"
+    },
+    email: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+      unique: "email"
+    },
+    tipo: {
+      type: DataTypes.ENUM('Admin','Normal'),
+      allowNull: false,
+      defaultValue: "Normal"
+    },
+    senha: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    data_criacao: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    ultima_actualizacao: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    estado: {
+      type: DataTypes.ENUM('Ativo','Inativo'),
+      allowNull: false,
+      defaultValue: "Ativo"
+    }
+  }, {
+    sequelize,
+    tableName: 'usuarios',
+    hasTrigger: true,
+    timestamps: false,
+    indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "id_usuario" },
+        ]
+      },
+      {
+        name: "telefone",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "telefone" },
+        ]
+      },
+      {
+        name: "email",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "email" },
+        ]
+      },
+    ]
+  });
+};

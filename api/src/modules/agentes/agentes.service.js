@@ -59,6 +59,7 @@ class classAgentServices {
             ],
             where: idCondition,
             include: [{ model: user_model, as: "usuario", attributes: [] }],
+            order: ["nome"],
         });
 
         if (!agentes_encontrados) {

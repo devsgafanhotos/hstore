@@ -7,7 +7,7 @@ const userRouter = Router();
 userRouter.post(
     "/cadastrar",
     AuthMiddleware.authanticateAccess,
-    AuthMiddleware.verifyRole(["admin"]),
+    AuthMiddleware.verifyRole(["Admin"]),
     UserControllers.cadastrar
 );
 userRouter.post("/session", UserControllers.refreshSession);
@@ -23,7 +23,7 @@ userRouter.post("/login", UserControllers.login);
 userRouter.post(
     "/generatekeyregister",
     AuthMiddleware.authanticateAccess,
-    AuthMiddleware.verifyRole(["admin"]),
+    AuthMiddleware.verifyRole(["Admin"]),
     UserControllers.generateKeyRegister
 );
 

@@ -1,131 +1,104 @@
-import {
-    Card,
-    Container,
-    Divider,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import iconMapper from "../utils/iconMapper";
-import { FaPlus, FaUserAltSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api/axios";
-
+import MyList from "../components/List/MyList";
+let peopleBase = [];
+const max_people = 50;
 export default function PeopleList({ type = "Usuarios" }) {
-    const [people, setPeople] = useState(null);
+    const [people, setPeople] = useState([]);
+    const [filterValue, setFilterValue] = useState("");
+    const [pageState, setPageState] = useState("loading");
+    const navigate = useNavigate();
+
     async function getPeople() {
         try {
             const url =
                 type === "Usuarios" ? "/user/usuarios" : "/agent/agentes";
             const { data } = await api.get(url);
-            return setPeople(data.data);
+            peopleBase.push(...data.data);
+            return setPeople(data.data.slice(-max_people));
         } catch (error) {
             setPeople([]);
+        } finally {
+            setPageState("done");
         }
     }
 
     useEffect(() => {
+        setPageState("loading");
+        setPeople(() => {
+            const newPeople = peopleBase.filter((value) => {
+                const nome = value?.nome.toLocaleLowerCase();
+                const telefone = value?.telefone;
+                const id = value?.id;
+
+                if (
+                    String(nome).includes(filterValue?.toLocaleLowerCase()) ||
+                    String(telefone).includes(
+                        filterValue?.toLocaleLowerCase()
+                    ) ||
+                    String(id).includes(filterValue?.toLocaleLowerCase())
+                )
+                    return value;
+            });
+            return newPeople.slice(-max_people);
+        });
+        const timeOut = setTimeout(() => {
+            setPageState("done");
+        }, 1000);
+
+        return () => clearTimeout(timeOut);
+    }, [filterValue]);
+
+    useEffect(() => {
+        peopleBase = [];
+        setFilterValue("");
+        setPageState("loading");
         getPeople();
     }, [type]);
 
     return (
-        <div className="flex-1 md:p-5">
-            <Card elevation={3} sx={{ borderRadius: "9px" }}>
-                <CardHeader sx={"flex justify-between items-center  "}>
-                    <p>{type} cadastrados</p>
-                    <Link
-                        to={`/${type}/cadastrar`}
-                        className="bg-(--color-primary) p-1 rounded-full"
-                    >
-                        <FaPlus className="text-(--color-gray)" />
-                    </Link>
-                </CardHeader>
-                <Container sx={{ paddingBottom: 3 }}>
-                    <List>
-                        {!people || people.length === 0 ? (
-                            <ListItem
-                                sx={{ p: 0, marginBottom: "2px" }}
-                                key={"none"}
-                            >
-                                <ListItemButton sx={{ borderRadius: 2 }}>
-                                    <ListItemIcon>
-                                        <FaUserAltSlash
-                                            size={20}
-                                            className="text-(--color-secondary)"
-                                        />
-                                    </ListItemIcon>
-                                    <div className="-ml-5">
-                                        <p>Sem entidades cadastradas</p>
-                                    </div>
-                                </ListItemButton>
-                            </ListItem>
-                        ) : (
-                            people.map((people) => (
-                                <PeopleListItem people={people} type={type} />
-                            ))
-                        )}
-                    </List>
-                </Container>
-            </Card>
-        </div>
-    );
-}
-
-export function CardHeader({ children, sx }) {
-    return (
-        <div className={`p-4 pr-6 pl-4 bg-(--color-secondary) text-white text-xl ${sx}`}>
-            {children}
-        </div>
-    );
-}
-
-export function PeopleListItem({ people, type = "Usuarios" }) {
-    const Icon =
-        type === "Usuarios" ? iconMapper.usuariosCadastrados : iconMapper.nome;
-    const to =
-        type === "Usuarios"
-            ? `/perfil/${people.id}`
-            : `/subagente/${people.id}`;
-
-    return (
-        <Link to={to} key={type}>
-            <ListItem sx={{ p: 0, marginBottom: "2px" }} key={people.id}>
-                <>
-                    <ListItemButton
-                        sx={{
-                            borderRadius: 2,
-                            paddingLeft: { xs: 0 },
-                            paddingRight: { xs: 0 },
+        <div className="flex-1 md:p-2" key={type}>
+            <Box paddingBottom={1.5}>
+                <div className="flex items-center justify-end">
+                    <span
+                        style={{
+                            padding: 8,
+                            borderRight: ".1px solid var(--color-gray-light)",
                         }}
+                        className="rounded-tl-full rounded-bl-full bg-(--color-bg)"
                     >
-                        <ListItemIcon>
-                            <Icon
-                                size={20}
-                                className="text-(--color-secondary)"
-                            />
-                        </ListItemIcon>
-                        <div className="-ml-6 w-full flex justify-between p-2">
-                            <ListItemText
-                                sx={{ margin: 0 }}
-                                primary={people.nome}
-                            />
-                            <ListItemText
-                                sx={{
-                                    margin: 0,
-                                    textAlign: "right",
-                                    color: "var(--color-primary)",
-                                    fontWeight: "bold",
-                                }}
-                                primary={people.id}
-                            />
-                        </div>
-                    </ListItemButton>
-                </>
-            </ListItem>
-            <Divider />
-        </Link>
+                        <FaSearch size={15} color="var(--color-primary)" />
+                    </span>
+                    <input
+                        style={{
+                            padding: 6,
+                            fontSize: ".8rem",
+                        }}
+                        className="outline-0 rounded-tr-full rounded-br-full bg-(--color-bg) min-w-60"
+                        placeholder="Filtrar Por Nome"
+                        value={filterValue}
+                        onChange={(e) => {
+                            setFilterValue(e.target.value);
+                        }}
+                    />
+                </div>
+            </Box>
+            <MyList
+                ListItems={people}
+                title={type}
+                pageState={pageState}
+                buttonPluss={{ to: `/${type}/cadastrar` }}
+                handleItemClick={(id) => {
+                    const to =
+                        type === "Usuarios"
+                            ? `/perfil/${id}`
+                            : `/subagente/${id}`;
+                    navigate(to);
+                }}
+            />
+        </div>
     );
 }

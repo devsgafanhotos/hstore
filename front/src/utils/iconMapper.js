@@ -20,15 +20,17 @@ import {
     FaCreditCard,
     FaQuestionCircle,
     FaUserShield,
+    FaHome,
 } from "react-icons/fa";
-import { LuLogIn, LuLogOut, LuMail,  } from "react-icons/lu";
+import { LuFishOff, LuFishSymbol, LuLogIn, LuLogOut, LuMail,  } from "react-icons/lu";
 
 
 const iconMapper = {
     "id": FaIdCard,
+    "home": FaHome,
     "telefone": FaPhone,
-    "datacadastro": FaCalendarAlt,
-    "cadastradopor": FaUserCheck,
+    "dataCadastro": FaCalendarAlt,
+    "cadastradoPor": FaUserCheck,
     "nome": FaUser,
     "email": LuMail,
     "role": FaUserShield,
@@ -41,6 +43,8 @@ const iconMapper = {
     "dadosQuinzenal": FaCalendarWeek,
     "dadosDiaria": FaCalendarDay,
     "faturacoes": FaFileInvoiceDollar,
+    "Electrônico": LuFishSymbol,
+    "Físico": LuFishOff,
     "subAgentes": FaUsers,
     "usuariosCadastrados": FaUserTie,
     "perfil": FaUserCircle,

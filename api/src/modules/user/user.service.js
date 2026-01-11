@@ -118,7 +118,7 @@ class classUserServices {
             success: true,
             message: "Seja bem-vindo!",
             user: payload,
-            isProd: isProd,
+            isProd: !isProd,
             access_token: ACCESS_TOKEN,
         };
     }

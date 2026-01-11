@@ -100,7 +100,7 @@ class ClassUserControllers {
                     status: 400,
                     success: false,
                     message: "Sua sessão expitou faça login...",
-                    refresh_token: "refresh_token: "+refresh_token
+                    refresh_token: "refresh_token: " + refresh_token,
                 });
             }
 
@@ -114,7 +114,6 @@ class ClassUserControllers {
                         return res.status(403).json({
                             status: 403,
                             success: false,
-                            err: "err: "+err,
                             message: "Sua sessão expitou faça login...",
                         });
                     }
@@ -124,12 +123,14 @@ class ClassUserControllers {
                         where: {
                             refresh_token: refresh_token,
                         },
+                        raw: true,
                     });
 
                     if (!refresh_token_exist) {
                         return res.status(403).json({
                             status: 403,
                             success: false,
+                            refresh_token_exist: "refresh_token_exist: " + refresh_token_exist,
                             message: "Sua sessão expitou faça login!",
                         });
                     }

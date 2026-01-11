@@ -11,7 +11,6 @@ const cookieOptions = {
     sameSite: "none",
     secure: true,
     maxAge: env.cookie_expiration,
-    path: "/user/session",
 };
 
 class classUserServices {

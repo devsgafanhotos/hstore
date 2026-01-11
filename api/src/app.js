@@ -28,7 +28,6 @@ export function app() {
     app.use(router);
     app.use(errorMiddleware);
 
-    app.use(cookieParser());
 
     connectDB();
 

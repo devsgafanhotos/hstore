@@ -7,9 +7,9 @@ const { tokens: token_model, usuarios: user_model } = getModels();
 const isProd = env.node_env === "production";
 
 const cookieOptions = {
-    httpOnly: false,
-    sameSite: "none",
-    secure: true,
+    httpOnly: !isProd ? false : true,
+    sameSite: !isProd ? "none" : "lax",
+    secure: !isProd,
     maxAge: env.cookie_expiration,
 };
 
@@ -118,7 +118,6 @@ class classUserServices {
             success: true,
             message: "Seja bem-vindo!",
             user: payload,
-            isProd: !isProd,
             access_token: ACCESS_TOKEN,
         };
     }

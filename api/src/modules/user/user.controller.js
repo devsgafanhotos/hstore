@@ -114,6 +114,7 @@ class ClassUserControllers {
                         return res.status(403).json({
                             status: 403,
                             success: false,
+                            err: "err: "+err,
                             message: "Sua sessão expitou faça login...",
                         });
                     }

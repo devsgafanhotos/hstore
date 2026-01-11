@@ -1,4 +1,4 @@
-import argon2 from "argon2";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import env from "../../config/env.js";
@@ -217,16 +217,11 @@ class classUserServices {
     }
 
     async createHash(string) {
-        return await argon2.hash(string, {
-            type: argon2.argon2id,
-            memoryCost: 2 ** 16, // 64 MB
-            timeCost: 3, // nº de iterações
-            parallelism: 1, // threads
-        });
+        return await bcrypt.hashSync(string, 10);
     }
 
     async verifyHash(hash, string) {
-        const valid = await argon2.verify(hash, string);
+        const valid = await bcrypt.compare(string, hash);
         return valid;
     }
 

@@ -7,9 +7,9 @@ const { tokens: token_model, usuarios: user_model } = getModels();
 const isProd = env.node_env === "production";
 
 const cookieOptions = {
-    httpOnly: isProd,
-    sameSite: isProd ? null : "none",
-    secure: !isProd,
+    httpOnly: false,
+    sameSite: "none",
+    secure: true,
     maxAge: env.cookie_expiration,
     path: "/user/session",
 };

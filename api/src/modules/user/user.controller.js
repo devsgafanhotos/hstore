@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import env from "../../config/env.js";
-import UserServices from "./user.service.js";
+import UserServices, { cookieOptions } from "./user.service.js";
 
 import { getModels } from "../../config/postgresqlClient.js";
 const { tokens: token_model } = getModels();
@@ -117,6 +117,7 @@ class ClassUserControllers {
                             message: "Sua sessão expitou faça login...",
                         });
                     }
+                    res.clearCookie("refresh_token", cookieOptions);
 
                     // SE O TOKEN DE REFRESCO ESTIVER EM DIA, ENTÃO VERIFICAMOS SE EXISTE NO BANCO.
                     const refresh_token_exist = await token_model.findOne({
@@ -130,7 +131,8 @@ class ClassUserControllers {
                         return res.status(403).json({
                             status: 403,
                             success: false,
-                            refresh_token_exist: "refresh_token_exist: " + refresh_token_exist,
+                            refresh_token_exist:
+                                "refresh_token_exist: " + refresh_token_exist,
                             message: "Sua sessão expitou faça login!",
                         });
                     }

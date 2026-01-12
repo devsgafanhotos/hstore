@@ -6,7 +6,7 @@ import { getModels } from "../../config/postgresqlClient.js";
 const { tokens: token_model, usuarios: user_model } = getModels();
 const isProd = env.node_env === "production";
 
-const cookieOptions = {
+export const cookieOptions = {
     httpOnly: !isProd ? false : true,
     sameSite: !isProd ? "none" : "lax",
     secure: !isProd,

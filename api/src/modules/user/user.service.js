@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import env from "../../config/env.js";
 import { getModels } from "../../config/postgresqlClient.js";
 const { tokens: token_model, usuarios: user_model } = getModels();
-const isProd = env.node_env === "production";
+const isProd = env.node_env === "dev";
 
 export const cookieOptions = {
     httpOnly: !isProd ? false : true,
@@ -111,6 +111,7 @@ class classUserServices {
             usuario_id: responseTelefone.data.id_usuario,
             refresh_token: REFRESH_TOKEN,
         });
+        console.log(cookieOptions);
 
         res.cookie("refreshToken", REFRESH_TOKEN, cookieOptions);
 

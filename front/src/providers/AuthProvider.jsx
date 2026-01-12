@@ -39,18 +39,17 @@ export default function AuthProvider({ children }) {
                     text: error.message || error.response?.data?.message,
                     style: "error",
                 });
-            } else {
+            } /*else {
                 setAlert({
                     type: "SHOW",
                     text: error.response?.data?.message || error.message,
                     style: "warning",
                 });
-            }
+            }*/
 
             setUser(null);
             setAccessToken(null);
         } finally {
-            //setUser({ nome: "admin", telefone: "admin", email: "admin", role: "admin", senha: "admin" });
             setAppState("done");
         }
     }

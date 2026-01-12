@@ -112,7 +112,7 @@ class classUserServices {
             refresh_token: REFRESH_TOKEN,
         });
 
-        res.cookie("refresh_token", REFRESH_TOKEN, cookieOptions);
+        res.cookie("refreshToken", REFRESH_TOKEN, cookieOptions);
 
         return {
             success: true,
@@ -131,7 +131,7 @@ class classUserServices {
                 where: { refresh_token: refresh_token },
             });
 
-            res.clearCookie("refresh_token", cookieOptions);
+            res.clearCookie("refreshToken", cookieOptions);
 
             return {
                 success: true,

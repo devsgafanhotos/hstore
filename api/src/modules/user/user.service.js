@@ -11,7 +11,6 @@ export const cookieOptions = {
     sameSite: !isProd ? "none" : "lax",
     secure: !isProd,
     maxAge: env.cookie_expiration,
-    path: "/",
 };
 
 class classUserServices {

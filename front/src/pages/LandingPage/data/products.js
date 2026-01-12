@@ -1,0 +1,34 @@
+export const products = [
+    {
+        id: 1,
+        title: "iPhone 15 Pro Max",
+        category: "Smartphones",
+        price: "1.450.000 Kz",
+        image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&q=80&w=800",
+        badge: "Novo",
+    },
+    {
+        id: 2,
+        title: "MacBook Air M2",
+        category: "Computadores",
+        price: "1.200.000 Kz",
+        image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&q=80&w=800",
+        badge: "Best Seller",
+    },
+    {
+        id: 3,
+        title: "Samsung S24 Ultra",
+        category: "Smartphones",
+        price: "1.350.000 Kz",
+        image: "https://images.unsplash.com/photo-1610945265078-3858a0b5d8f4?auto=format&fit=crop&q=80&w=800",
+        badge: "Promo",
+    },
+    {
+        id: 4,
+        title: "Sony WH-1000XM5",
+        category: "Áudio",
+        price: "350.000 Kz",
+        image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800",
+        badge: null,
+    },
+];

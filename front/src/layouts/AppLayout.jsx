@@ -2,10 +2,9 @@ import { useState } from "react";
 import NavBar from "../partials/template/NavBar";
 import Button from "@mui/material/Button";
 import { LuMenu } from "react-icons/lu";
-import { useAuth } from "../hooks/useAuth";
+import { Outlet } from "react-router-dom";
 
 export default function AppLayout({ children }) {
-    const { user } = useAuth()
     const [open, setOpen] = useState(false);
 
     return (
@@ -23,8 +22,8 @@ export default function AppLayout({ children }) {
                         <LuMenu className="text-3xl text-(--color-secondary)" />
                     </Button>
                 </header>
-                <main className="flex-1 flex p-2 md:p-4 overflow-auto">
-                    {children}
+                <main className="flex-1 flex p-2 overflow-auto">
+                    <Outlet />
                 </main>
             </div>
         </div>

@@ -6,7 +6,6 @@ import {
     ListItem,
     ListItemButton,
     ListItemIcon,
-    ListItemText,
 } from "@mui/material";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -17,7 +16,6 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import logo from "/logo.png";
 
 export default function OpcoesMenu({ toggleDrawer }) {
     const { user } = useAuth();
@@ -64,19 +62,39 @@ export default function OpcoesMenu({ toggleDrawer }) {
                 sx={{
                     display: "flex",
                     flexFlow: "column",
-                    backgroundColor: "var(--color-primary)",
+                    backgroundColor: "secondary.main",
                     justifyContent: "space-between",
                     height: "100%",
                     p: 0,
+                    color: "text.main"
                 }}
             >
                 <div>
-                    <div className="text-(--color-primary) bg-(--color-secondary) h-40 flex items-center p-4 mb-2">
+                    <Box
+                        sx={{
+                            backgroundColor: "primary.main",
+                            color: "secondary.main",
+                            height: 170,
+                            px: 2,
+                            display: "flex",
+                            flexFlow: "column",
+                            justifyContent: "center"
+                        }}
+                    >
                         <Link to={"/"} onClick={handleClose}>
                             <h1 className="text-5xl font-extrabold">H-STORE</h1>
+                            <Box
+                            component="span"
+                            sx={{
+                                width: 8,
+                                height: 8,
+                                bgcolor: "secondary.main",
+                                borderRadius: "50%",
+                            }}
+                        />
                             <p className="text-xl">Agente autorizado Unitel</p>
                         </Link>
-                    </div>
+                    </Box>
                     {menuOptions.map((option) => (
                         <MenuOption
                             key={option.descricao}

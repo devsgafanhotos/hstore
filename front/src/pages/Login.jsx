@@ -1,26 +1,64 @@
-import { Card, Container, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardHeader,
+    Fade,
+    Typography,
+} from "@mui/material";
+import { ArrowForward, LockOutlined, Phone } from "@mui/icons-material";
 import { useState } from "react";
 import AppLoader from "../components/feedback/AppLoader";
-import MyButton from "../components/form/MyButton";
 import { useAlert } from "../hooks/useAlert";
 import { useAuth } from "../hooks/useAuth";
-import MyInput from "../components/form/MyInput";
 import { Navigate } from "react-router-dom";
-import MyCard, { MyCardContent, MyCardHeader } from "../components/card/Card";
+import FormFields from "../components/form/FormFields";
 
 export default function Login({}) {
     const { login, user } = useAuth();
     const { setAlert } = useAlert();
 
-    const [credencials, setCredencials] = useState({
+    const [credentials, setCredentials] = useState({
         telefone: "",
         senha: "",
     });
-    const [formState, setFormState] = useState("typing");
-    const formDisabled =
-        !credencials.telefone || !credencials.senha || formState === "loading";
+    const [formStatus, setFormStatus] = useState("typing");
+    const isFormValid =
+        !(credentials.telefone.length >= 9) ||
+        !(credentials.senha.length >= 6) ||
+        formStatus === "loading";
+
+    const handleChange = ({ target }) => {
+        setCredentials((prev) => ({
+            ...prev,
+            [target.name]: target.value,
+        }));
+    };
+
+    const Fields = [
+        {
+            label: "Telefone",
+            name: "telefone",
+            type: "tel",
+            value: credentials.telefone,
+            icon: Phone,
+            handleChange: handleChange,
+            required: true,
+        },
+        {
+            label: "Senha",
+            name: "senha",
+            type: "password",
+            value: credentials.senha,
+            icon: LockOutlined,
+            handleChange: handleChange,
+            required: true,
+        },
+    ];
+
     const titleButton =
-        formState === "typing" ? (
+        formStatus === "typing" ? (
             "Entrar"
         ) : (
             <>
@@ -28,21 +66,14 @@ export default function Login({}) {
             </>
         );
 
-    const handleChangeInput = (e) => {
-        setCredencials({
-            ...credencials,
-            [e.target.name]: e.target.value,
-        });
-    };
-
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-            setFormState("loading");
-            const response = await login(credencials);
+            setFormStatus("loading");
+            const response = await login(credentials);
 
             if (response?.success) {
-                setFormState("done");
+                setFormStatus("done");
                 return setAlert({
                     type: "SHOW",
                     text: response.message,
@@ -64,49 +95,50 @@ export default function Login({}) {
                 });
             }
 
-            setFormState("typing");
+            setFormStatus("typing");
         }
     };
 
-    if (user || formState === "done") {
+    if (user || formStatus === "done") {
         return <Navigate to={"/"} />;
     }
+
     return (
-        <form
-            className="flex-1 flex justify-center items-center"
+        <Box
+            flex={"1"}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            component={"form"}
             onSubmit={handleSubmit}
         >
-            <MyCard sx={{ width: { xs: 320, sm: 450 } }}>
-                <MyCardHeader>
-                    <p>Login</p>
-                </MyCardHeader>
-                <MyCardContent sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
-                    <MyInput
-                        id="telefone"
-                        label="Telefone"
-                        type="tel"
-                        name="telefone"
-                        value={credencials.telefone}
-                        handleChangeInput={(e) => {
-                            handleChangeInput(e);
-                        }}
-                    />
-                    <MyInput
-                        id="senha"
-                        label="Senha"
-                        type="password"
-                        name="senha"
-                        value={credencials.senha}
-                        handleChangeInput={(e) => {
-                            handleChangeInput(e);
-                        }}
-                    />
-
-                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled} type={"submit"}>
-                        {titleButton}
-                    </MyButton>
-                </MyCardContent>
-            </MyCard>
-        </form>
+            <Fade in timeout={600}>
+                <Card
+                    sx={{
+                        width: "100%",
+                        maxWidth: 450,
+                        borderRadius: "24px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,.1)",
+                    }}
+                >
+                    <CardHeader title="Bem-vindo" />
+                    <CardContent
+                        sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}
+                    >
+                        <FormFields Fields={Fields} />
+                        <Button
+                            type="submit"
+                            size="large"
+                            variant="contained"
+                            disabled={isFormValid}
+                            sx={{ py: 1.4 }}
+                            endIcon={!isFormValid && <ArrowForward />}
+                        >
+                            {titleButton}
+                        </Button>
+                    </CardContent>
+                </Card>
+            </Fade>
+        </Box>
     );
 }

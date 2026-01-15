@@ -1,6 +1,7 @@
 import {
     Autocomplete,
     Box,
+    Button,
     IconButton,
     Stack,
     TextField,
@@ -14,23 +15,24 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import { api } from "../api/axios";
-import MyList from "../components/List/MyList";
+import { api } from "../../api/axios";
+import MyListItems from "../../components/shower/MyListItems";
 import { FaFileInvoiceDollar, FaQuestion } from "react-icons/fa6";
 import { FaFilter } from "react-icons/fa";
-import MyDialog from "../components/modal/MyDialog";
-import MyButton from "../components/form/MyButton";
+import MyDialog from "../../components/modal/MyDialog";
+import { useCache } from "../../hooks/useCache";
 
 export default function Faturacoes() {
     const [openDialog, setOpenDialog] = useState(false);
+    const { handleSell } = useCache();
     const onCloseDialog = () => setOpenDialog(false);
     const onOpenDialog = () => setOpenDialog(true);
     const [dialogTitle, setDialogTitle] = useState("");
 
     const [faturacoes, setFaturacoes] = useState([]);
     const [filterValue, setFilterValue] = useState({
-        dataInicio: new Date(0).toLocaleString(),
-        dataFim: new Date().toLocaleString(),
+        dataInicio: new Date(0),
+        dataFim: new Date(),
         forma_pagamento: null,
         tipo_faturacao: null,
     });
@@ -47,6 +49,7 @@ export default function Faturacoes() {
                     tipo_faturacao: filterValue.tipo_faturacao,
                 },
             });
+
             return setFaturacoes([...data.data]);
         } catch (error) {
             console.log(error);
@@ -137,9 +140,6 @@ export default function Faturacoes() {
                             {filterValue.agente_id ?? ""}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {filterValue.id_faturacao ?? ""}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
                             {filterValue.forma_pagamento ?? ""}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -148,11 +148,13 @@ export default function Faturacoes() {
                     </Box>
                 </Box>
             </Box>
-            <MyList
+            <MyListItems
                 ListItems={faturacoes}
                 title="Faturações"
                 pageState={pageState}
-                buttonPluss={{ to: "/faturacoes/new" }}
+                buttonPluss={{
+                    handleClick: () => handleSell(true),
+                }}
             />
             <MyDialog
                 open={openDialog}
@@ -197,7 +199,7 @@ function FormFilter({ onCloseDialog, handleFilter }) {
                 />
                 <Autocomplete
                     options={["Quinzenal", "Mensal"]}
-                    value={formFilter.forma_pagamento}
+                    value={dayjs(formFilter.forma_pagamento)}
                     onChange={(_, v) =>
                         setFormFilter({
                             ...formFilter,
@@ -235,20 +237,20 @@ function FormFilter({ onCloseDialog, handleFilter }) {
                     />
                 </LocalizationProvider>
                 <Box>
-                    <MyButton
+                    <Button
                         variant="outlined"
                         handleClick={onCloseDialog}
                         sx={{ marginRight: 2 }}
                     >
                         Cancelar
-                    </MyButton>
-                    <MyButton
+                    </Button>
+                    <Button
                         handleClick={() => {
                             handleFilter(formFilter);
                         }}
                     >
                         Aplicar
-                    </MyButton>
+                    </Button>
                 </Box>
             </Stack>
         </Box>

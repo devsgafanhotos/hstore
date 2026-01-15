@@ -7,7 +7,7 @@ import Hero from "./sections/HeroSection";
 
 export default function LandingPage() {
     return (
-        <Box>
+        <Box flex={"1"}>
             <Hero />
             <Features />
             <ProductShowcase />

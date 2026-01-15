@@ -1,4 +1,5 @@
 import { useAuth } from "../hooks/useAuth";
+import CacheProvider from "./CacheProvider";
 
 export default function AuthenticatedProviders({ children }) {
     const { user } = useAuth();
@@ -8,8 +9,8 @@ export default function AuthenticatedProviders({ children }) {
     }
 
     return (
-        <>
-            {children}
-        </>
+        <CacheProvider>
+            <>{children}</>
+        </CacheProvider>
     );
 }

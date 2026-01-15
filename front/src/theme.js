@@ -31,28 +31,73 @@ const theme = createTheme({
     },
     palette: {
         mode: "light",
-        primary: { main: "#4B1E78" },
-        secondary: { main: "#f7941e" },//
+        primary: { main: "#0F172A" },
+        secondary: { main: "#F37021" },
+        background: {
+            default: "#F1F5F9",
+            paper: "#FFFFFF",
+        },
         text: {
             primary: "#1E293B",
             secondary: "#64748B",
         },
-        background: { default: "#FFFFFF" },
+        green: { primary: "#5acc02" },
     },
     components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    borderRadius: 50,
-                    padding: "10px 24px",
-                },
-            },
-        },
         MuiCard: {
             styleOverrides: {
                 root: {
-                    borderRadius: 16,
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+                    borderRadius: "9px",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+                    border: "1px solid #E2E8F0",
+                },
+            },
+        },
+        MuiCardHeader: {
+            styleOverrides: {
+                root: {
+                    borderRadius: "9px",
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                    borderBottom: "1px solid #f0f0f0",
+                    fontWeight: 600,
+                    padding: 14,
+                    paddingBottom: 8,
+                },
+            },
+        },
+        MuiCardContent: {
+            styleOverrides: {
+                root: {
+                    borderRadius: "9px",
+                    padding: "16px",
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: "secondary.main",
+                    borderRadius: 8,
+                    textTransform: "none",
+                    fontSize: "1rem",
+                    color: "background.paper",
+                },
+            },
+        },
+        MuiListItem: {
+            styleOverrides: {
+                root: {
+                    padding: 0,
+                },
+            },
+        },
+        MuiListItemButton: {
+            styleOverrides: {
+                root: {
+                    padding: 2,
+                    paddingLeft: "8px",
+                    paddingRight: "8px",
                 },
             },
         },

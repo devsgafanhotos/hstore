@@ -17,15 +17,15 @@
 
 /* MODO CLARO */
 :root {
-    --color-primary: #f7941e;
+    --color-primary: #0F172A;
     --color-primary-light: #f7941ecb;
     /* Laranja principal */
     --color-primary-strong: #FF7A00;
     /* Laranja mais vibrante */
-    --color-secondary: #4B1E78;
+    --color-secondary: #F37021;
     /* Azul corporativo */
 
-    --color-gray: #f0f0f0;
+    --color-gray: #F1F5F9;
     --color-green: #5acc02;
     --color-gray-light: #CFCFCF;
 

@@ -18,7 +18,7 @@ export default function Hero() {
                 minHeight: "85vh",
                 display: "flex",
                 alignItems: "center",
-                background: "linear-gradient(135deg, #F8FAFC, #E2E8F0)",
+                flexFlow: "column"
             }}
         >
             <Container maxWidth="lg">

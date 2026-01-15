@@ -126,7 +126,7 @@ class classUserServices {
     async logout(req, res) {
         try {
             const { user } = req.user;
-            const refresh_token = req.cookies.refresh_token;
+            const refresh_token = req.cookies.refreshToken;
 
             token_model.destroy({
                 where: { refresh_token: refresh_token },

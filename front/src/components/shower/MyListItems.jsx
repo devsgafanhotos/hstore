@@ -5,39 +5,59 @@ import {
     ListItemButton,
     ListItemIcon,
     Typography,
+    Card,
+    CardContent,
+    CardHeader,
+    ListItemText,
+    IconButton,
 } from "@mui/material";
 import AppLoader from "../feedback/AppLoader";
-import MyCard, { MyCardContent, MyCardHeader } from "../card/Card";
 import { Link } from "react-router-dom";
 import { FaPlus, FaQuestion } from "react-icons/fa";
 
-export default function MyList({
+export default function MyListItems({
     ListItems = [],
     ItemIcone = FaQuestion,
     pageState = "",
     title = "Items",
-    buttonPluss = { to: null },
-    handleItemClick
+    extraButton,
+    buttonPluss = { to: null, handleClick: null },
+    handleItemClick,
 }) {
+    const CardHeaderTitle = (
+        <div className="flex justify-between items-center">
+            {title}
+            {extraButton}
+            {(buttonPluss.to || buttonPluss.handleClick) && (
+                <>
+                    {buttonPluss.to ? (
+                        <Link to={buttonPluss.to}>
+                            <FaPlus color="#F37021" />
+                        </Link>
+                    ) : (
+                        <IconButton onClick={buttonPluss.handleClick}>
+                            <FaPlus color="#F37021" />
+                        </IconButton>
+                    )}
+                </>
+            )}
+        </div>
+    );
+
     return (
-        <MyCard>
-            <MyCardHeader sx={"flex justify-between items-center"}>
-                <p>{title}</p>
-                {buttonPluss.to && (
-                    <Link
-                        to={buttonPluss.to}
-                        className="bg-(--color-primary) p-1 rounded-full"
-                    >
-                        <FaPlus className="text-(--color-gray)" />
-                    </Link>
-                )}
-            </MyCardHeader>
-            <MyCardContent
+        <Card>
+            <CardHeader
+                sx={
+                    !title.includes("Faturaçõees Recentes") && {
+                        backgroundColor: "primary.main",
+                        color: "background.paper",
+                    }
+                }
+                title={CardHeaderTitle}
+            />
+            <CardContent
                 sx={{
-                    paddingBottom: 3,
-                    maxHeight: { xs: "470px", md: "480px" },
-                    overflowY: "scroll",
-                    px: 0,
+                    padding: 0,
                 }}
             >
                 {pageState === "loading" ? (
@@ -46,10 +66,10 @@ export default function MyList({
                         <AppLoader />
                     </div>
                 ) : (
-                    <List>
+                    <List sx={{ padding: 0 }}>
                         {!ListItems || ListItems.length === 0 ? (
                             <ListItem
-                                sx={{ p: 0, marginBottom: "2px" }}
+                                sx={{ padding: 0, marginBottom: "2px" }}
                                 key={"none"}
                             >
                                 <ListItemButton sx={{ borderRadius: 2 }}>
@@ -59,51 +79,59 @@ export default function MyList({
                                             className="text-(--color-secondary)"
                                         />
                                     </ListItemIcon>
-                                    <div className="-ml-5">
-                                        <p>Sem {title.toLocaleLowerCase()}</p>
-                                    </div>
+                                    <ListItemText
+                                        primary={`Sem ${title.toLocaleLowerCase()}`}
+                                    />
                                 </ListItemButton>
                             </ListItem>
                         ) : (
                             ListItems.map((listItem) => (
-                                <MyListItem listItem={listItem} handleClick={handleItemClick} />
+                                <MyListItem
+                                    listItem={listItem}
+                                    handleClick={handleItemClick}
+                                />
                             ))
                         )}
                     </List>
                 )}
-            </MyCardContent>
-        </MyCard>
+            </CardContent>
+        </Card>
     );
 }
 
 export function MyListItem({ listItem, Icon, handleClick }) {
     return (
         <>
-            <ListItem onClick={() => handleClick(listItem.id)} sx={{ padding: 0, my: 1 }} key={listItem?.id}>
+            <ListItem
+                onClick={() => handleClick(listItem.id)}
+                sx={{ padding: 0.5, my: 0.5 }}
+                key={listItem?.id}
+            >
                 <ListItemButton
                     sx={{
                         borderRadius: 2,
                         padding: 1,
+                        px: { md: 2 },
                         display: "flex",
                     }}
                 >
                     <div className="flex-1 flex flex-col">
                         <Typography
                             variant="h6"
-                            fontSize={"1rem"}
-                            color="var(--color-text)"
+                            fontSize={"1.2rem"}
+                            color="text.primary"
                             fontWeight={"bold"}
                         >
                             {listItem?.agente || listItem?.nome}
                         </Typography>
                         <Typography
-                            variant="body2"
+                            variant="caption"
+                            fontSize={"1rem"}
                             color="text.secondary"
                             display="flex"
                             alignItems="center"
                             gap={0.5}
                         >
-                            {/*<AccessTime sx={{ fontSize: 16 }} />*/}
                             {new Date(
                                 listItem?.dataFaturacao ||
                                     listItem?.dataCadastro
@@ -113,24 +141,25 @@ export function MyListItem({ listItem, Icon, handleClick }) {
                     <div className="flex flex-col">
                         <Typography
                             variant="body1"
-                            fontSize={"1.3rem"}
-                            color={
-                                listItem?.valor
-                                    ? "var(--color-green)"
-                                    : "var(--color-primary)"
-                            }
-                            textAlign={"right"}
-                        >
-                            {getMoeda(listItem?.valor) || listItem?.id}
-                        </Typography>
-                        <Typography
-                            variant="body1"
                             color="text.secondary"
                             fontSize={"1rem"}
                             textAlign={"right"}
                         >
                             {listItem?.tipoFaturacao ||
                                 `+244 ${listItem?.telefone}`}
+                        </Typography>
+                        <Typography
+                            variant="body1"
+                            fontWeight={600}
+                            fontSize={"1.3rem"}
+                            color={
+                                listItem?.valor
+                                    ? "var(--color-green)"
+                                    : "secondary.main"
+                            }
+                            textAlign={"right"}
+                        >
+                            {getMoeda(listItem?.valor) || listItem?.id}
                         </Typography>
                     </div>
                 </ListItemButton>
@@ -140,7 +169,7 @@ export function MyListItem({ listItem, Icon, handleClick }) {
     );
 }
 
-function getMoeda(valor) {
+export function getMoeda(valor) {
     if (!valor) {
         return null;
     }

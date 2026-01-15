@@ -2,11 +2,10 @@ import { useState } from "react";
 import AppLoader from "../components/feedback/AppLoader";
 import MyButton from "../components/form/MyButton";
 import { useAlert } from "../hooks/useAlert";
-import { useAuth } from "../hooks/useAuth";
 import MyInput from "../components/form/MyInput";
 import { Navigate } from "react-router-dom";
 import { api } from "../api/axios";
-import MyCard, { MyCardContent, MyCardHeader } from "../components/card/Card";
+import { Box, Card, CardContent, CardHeader } from "@mui/material";
 
 const OptionsInitialPeople = {
     Usuarios: {
@@ -109,17 +108,19 @@ export default function NewPeople({ type = "Usuarios" }) {
         return <Navigate to={to} />;
     }
     return (
-        <form
-            className="flex-1 flex justify-center items-center"
+        <Box
+            flex={"1"}
+            margin={"auto"}
+            display={"flex"}
+            alignItems={"center"}
+            component={"form"}
             onSubmit={handleSubmit}
         >
-            <MyCard
-                sx={{ width: { xs: 320, sm: 450 }, borderRadius: "9px" }}
-            >
-                <MyCardHeader>
-                    <p>Cadastrar {type.slice(0, -1)}</p>
-                </MyCardHeader>
-                <MyCardContent sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}>
+            <Card sx={{ width: { xs: 320, sm: 450 }, borderRadius: "9px" }}>
+                <CardHeader title={`Cadastrar ${type.slice(0, -1)}`}/>
+                <CardContent
+                    sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}
+                >
                     {Object.keys(initialPeople).map((key) => {
                         return (
                             <MyInput
@@ -137,11 +138,15 @@ export default function NewPeople({ type = "Usuarios" }) {
                         );
                     })}
 
-                    <MyButton sx={{ borderRadius: 5 }} disabled={formDisabled} type={"submit"}>
+                    <MyButton
+                        sx={{ borderRadius: 5 }}
+                        disabled={formDisabled}
+                        type={"submit"}
+                    >
                         {titleButton}
                     </MyButton>
-                </MyCardContent>
-            </MyCard>
-        </form>
+                </CardContent>
+            </Card>
+        </Box>
     );
 }

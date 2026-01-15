@@ -1,31 +1,44 @@
-import { useState } from "react";
-import NavBar from "../partials/template/NavBar";
-import Button from "@mui/material/Button";
-import { LuMenu } from "react-icons/lu";
+import { useRef, useState } from "react";
+import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import Header from "../partials/template/Header";
+import Sidebar from "../partials/template/Sidebar";
+import ScrollTop from "../components/feedback/ScrollTop";
+import { DialogNovaFaturacao } from "../pages/Faturacoes/Cadastrar";
+import { useAuth } from "../hooks/useAuth";
+import { motion } from "framer-motion";
 
-export default function AppLayout({ children }) {
-    const [open, setOpen] = useState(false);
+export default function AppLayout() {
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const boxRef = useRef(null); // Ref para o box principal
+    const { user } = useAuth();
 
     return (
-        <div className="h-screen flex">
-            <NavBar state={{ open, setOpen }} />
-            <div className="flex-1 flex flex-col bg-(--color-gray)">
-                <header className="md:hidden">
-                    <Button
-                        variant="text"
-                        sx={{ backgroundColor: "transparent" }}
-                        onClick={() => {
-                            setOpen(!open);
-                        }}
-                    >
-                        <LuMenu className="text-3xl text-(--color-secondary)" />
-                    </Button>
-                </header>
-                <main className="flex-1 flex p-2 overflow-auto">
+        <Box sx={{ display: "flex", height: "100vh", border: "1px solid" }}>
+            <Header drawerState={{ openDrawer, setOpenDrawer }} />
+            <Sidebar drawerState={{ openDrawer, setOpenDrawer }} />
+            <motion.div
+                style={{ display: "flex", flex: "1", flexFlow: "column" }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <Box
+                    ref={boxRef}
+                    component="main"
+                    sx={{
+                        display: "flex",
+                        flexFlow: "column",
+                        flexGrow: 1,
+                        overflowY: "scroll",
+                        p: 1,
+                        mt: 7,
+                    }}
+                >
                     <Outlet />
-                </main>
-            </div>
-        </div>
+                    {user && <DialogNovaFaturacao />}
+                    <ScrollTop target={() => boxRef.current} />
+                </Box>
+            </motion.div>
+        </Box>
     );
 }

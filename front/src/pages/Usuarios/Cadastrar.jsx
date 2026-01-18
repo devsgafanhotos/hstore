@@ -1,7 +1,5 @@
-import { People, Phone } from "@mui/icons-material";
+import { Mail, People, Phone } from "@mui/icons-material";
 import FormFields from "../../components/form/FormFields";
-import MyDialog from "../../components/modal/MyDialog";
-import { FaIdCard } from "react-icons/fa6";
 import { useState } from "react";
 import { Alert, Box, Button } from "@mui/material";
 import { api } from "../../api/axios";
@@ -9,19 +7,21 @@ import { useAlert } from "../../hooks/useAlert";
 import { useCache } from "../../hooks/useCache";
 import AppLoader from "../../components/feedback/AppLoader";
 
-export default function FormCadastrarAgente({ onCLoseDialog }) {
+export default function FormCadastrarUsuario({ onCLoseDialog }) {
     const { setAlert } = useAlert();
     const { ReloadCache } = useCache();
 
     const [formStatus, setFormStatus] = useState("typing");
     const [formInfo, setFormInfo] = useState("");
-    const [novoAgente, setNovoAgente] = useState({
-        id_agente: "",
+    const [novoUsuario, setNovoUsuario] = useState({
+        email: "",
         telefone: "",
         nome: "",
+        role: "Normal",
     });
+
     const handleChange = ({ target }) => {
-        setNovoAgente((prev) => ({
+        setNovoUsuario((prev) => ({
             ...prev,
             [target.name]: target.value,
         }));
@@ -32,10 +32,10 @@ export default function FormCadastrarAgente({ onCLoseDialog }) {
             e.preventDefault();
             setFormStatus("loading");
 
-            const { data } = await api.post("/agent/cadastrar", novoAgente);
+            const { data } = await api.post("/user/cadastrar", novoUsuario);
 
             if (data?.success) {
-                ReloadCache("agentes");
+                ReloadCache("users");
                 onCLoseDialog();
                 setFormStatus("done");
 
@@ -49,14 +49,13 @@ export default function FormCadastrarAgente({ onCLoseDialog }) {
             console.log(error);
 
             setFormInfo(error.response?.data?.message || error.message);
-
             setFormStatus("warning");
         }
     };
 
     const isFormValid =
-        novoAgente.nome.length >= 4 &&
-        (novoAgente.id_agente.length >= 4 || novoAgente.telefone.length >= 9);
+        novoUsuario.nome.length >= 4 &&
+        (novoUsuario.email.length >= 4 || novoUsuario.telefone.length >= 9);
 
     const titleButton =
         formStatus !== "loading" ? (
@@ -70,11 +69,11 @@ export default function FormCadastrarAgente({ onCLoseDialog }) {
     const Fields = [
         {
             handleChange: handleChange,
-            icon: FaIdCard,
-            label: "Id do Agente",
-            name: "id_agente",
+            icon: Mail,
+            label: "E-mail",
+            name: "email",
             type: "tel",
-            value: novoAgente.id_agente,
+            value: novoUsuario.email,
         },
         {
             handleChange: handleChange,
@@ -82,7 +81,7 @@ export default function FormCadastrarAgente({ onCLoseDialog }) {
             label: "Telefone",
             name: "telefone",
             type: "tel",
-            value: novoAgente.telefone,
+            value: novoUsuario.telefone,
         },
         {
             handleChange: handleChange,
@@ -90,7 +89,7 @@ export default function FormCadastrarAgente({ onCLoseDialog }) {
             label: "Nome",
             name: "nome",
             type: "text",
-            value: novoAgente.nome,
+            value: novoUsuario.nome,
         },
     ];
 

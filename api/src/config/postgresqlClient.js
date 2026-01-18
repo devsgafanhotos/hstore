@@ -4,13 +4,6 @@ import env from "./env.js";
 
 const sequelize = new Sequelize(env.database_url, {
     dialect: "mysql",
-    dialectOptions: {
-        ssl: {
-            require: false,
-            rejectUnauthorized: false, // ignora certificado autoassinado
-        },
-    },
-    logging: false, // opcional
 });
 
 export async function connectDB() {

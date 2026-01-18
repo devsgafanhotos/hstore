@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useAuth } from "../../hooks/useAuth";
 import {
     AppBar,
@@ -17,10 +18,9 @@ import {
 } from "@mui/material";
 import MyLinkButton from "../../components/form/MyLinkButton";
 import { MenuOptions } from "../../utils/MenuOptions";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DollarSign, MenuIcon, Plus, UserIcon } from "lucide-react";
-import { useCache } from "../../hooks/useCache";
-import { TitleSharp } from "@mui/icons-material";
+import { useAction } from "../../hooks/useAction";
 
 export const drawerWidth = 275;
 export default function Header({ drawerState }) {
@@ -31,8 +31,8 @@ export default function Header({ drawerState }) {
 
     function NewSellIcone() {
         if (!user) return;
-
-        const { handleSell } = useCache();
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const { handleSell } = useAction();
         return (
             <Tooltip title="Nova Faturação">
                 <IconButton size="small" onClick={() => handleSell(true)}>

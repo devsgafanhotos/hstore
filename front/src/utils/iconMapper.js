@@ -1,13 +1,9 @@
-// iconMapper.js
+import { CalendarMonth, Mail, Password, People, Phone } from "@mui/icons-material";
 import {
     FaIdCard,
-    FaPhone,
-    FaCalendarAlt,
     FaUserCheck,
-    FaUser,
     FaUsers,
     FaUserTie,
-    FaUserCircle,
     FaChartPie,
     FaChartLine,
     FaCalendarCheck,
@@ -22,19 +18,21 @@ import {
     FaUserShield,
     FaHome,
 } from "react-icons/fa";
-import { LuFishOff, LuFishSymbol, LuLogIn, LuLogOut, LuMail,  } from "react-icons/lu";
+import { LuFishOff, LuFishSymbol } from "react-icons/lu";
 
 
 const iconMapper = {
     "id": FaIdCard,
-    "home": FaHome,
-    "telefone": FaPhone,
-    "dataCadastro": FaCalendarAlt,
+    "telefone": Phone,
+    "dataCadastro": CalendarMonth,
     "cadastradoPor": FaUserCheck,
-    "nome": FaUser,
-    "email": LuMail,
+    "nome": People,
+    "email": Mail,
     "role": FaUserShield,
-    "senha": FaUser,
+    "senha": Password,
+
+
+    "home": FaHome,
     "relatorios": FaChartPie,
     "pagamentos": FaCreditCard,
     "pagamentosEfetuados": FaCheckCircle,
@@ -47,9 +45,6 @@ const iconMapper = {
     "Físico": LuFishOff,
     "subAgentes": FaUsers,
     "usuariosCadastrados": FaUserTie,
-    "perfil": FaUserCircle,
-    "sair": LuLogIn,
-    "entrar": LuLogOut,
     "totalVendido": FaChartLine,
     "meuPerfil": FaRegUserCircle,
 };

@@ -1,15 +1,23 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyListItems from "../../components/shower/MyListItems";
 import { useCache } from "../../hooks/useCache";
 import SearchField from "../../components/shower/SearchField";
+import { FaPlus } from "react-icons/fa6";
+import MyDialog from "../../components/modal/MyDialog";
+import FormCadastrarUsuario from "./Cadastrar";
 
 let usuariosBase = [];
 const max_items = 50;
 export default function Usuarios() {
-    const navigate = useNavigate();
     const { users } = useCache().entidades;
+    const navigate = useNavigate();
+
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const onCLoseDialog = () => setOpenDialog(false);
+    const onOpenDialog = () => setOpenDialog(true);
 
     const [usuarios, setUsuarios] = useState([]);
     const [filterValue, setFilterValue] = useState("");
@@ -21,6 +29,7 @@ export default function Usuarios() {
 
             return setUsuarios(users?.slice(-max_items));
         } catch (error) {
+            console.log(error);
             setUsuarios([]);
         } finally {
             setPageState("done");
@@ -60,6 +69,16 @@ export default function Usuarios() {
         getUsuarios();
     }, []);
 
+    const buttonAdd = (
+        <IconButton onClick={onOpenDialog}>
+            <FaPlus color="#F37021" size={25} />
+        </IconButton>
+    );
+
+    const handleShowProfile = (user) => {
+        navigate(`/usuario/${user.id}`, { state: { user } });
+    };
+
     return (
         <Box sx={{ flex: "1" }}>
             <SearchField
@@ -69,10 +88,18 @@ export default function Usuarios() {
             <MyListItems
                 ListItems={usuarios}
                 title={"Usuarios"}
+                extraButton={buttonAdd}
                 pageState={pageState}
-                buttonPluss={{ to: `/usuario/cadastrar` }}
-                handleItemClick={(id) => navigate(`/usuario/${id}`)}
+                handleItemClick={handleShowProfile}
             />
+
+            <MyDialog
+                open={openDialog}
+                onClose={onCLoseDialog}
+                title="Novo Usuario"
+            >
+                <FormCadastrarUsuario onCLoseDialog={onCLoseDialog} />
+            </MyDialog>
         </Box>
     );
 }

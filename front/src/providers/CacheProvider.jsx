@@ -3,42 +3,80 @@ import { useEffect, useState } from "react";
 import { CacheContext } from "../context/CacheContext";
 import AppLoader from "../components/feedback/AppLoader";
 import { api } from "../api/axios";
+import { amanha, hoje } from "../utils/date";
 
 export default function CacheProvider({ children }) {
     const [pageState, setPageState] = useState("loading");
-    const [users, setUsers] = useState([]);
-    const [agents, setAgents] = useState([]);
-    const [reloadCache, setReloadCache] = useState(1);
+    const [users, setUsers] = useState(null);
+    const [agents, setAgents] = useState(null);
+    const [faturacoes, setFaturacoes] = useState(null);
+    const [reloadCache, setReloadCache] = useState({
+        users: 1,
+        agents: 1,
+        faturacoes: 1,
+    });
 
-    const [newSell, setNewSell] = useState({ agent: null, show: false });
-    const handleSell = (show=true, agent) =>
-        setNewSell({ agent: agent, show: show });
+    const ReloadCache = (entidade = "faturacoes") => {
+        const newState = () => {
+            if (entidade === "faturacoes") {
+                return {
+                    ...reloadCache,
+                    faturacoes: reloadCache.faturacoes + 1,
+                };
+            } else if (entidade === "agentes") {
+                return { ...reloadCache, agents: reloadCache.agents + 1 };
+            } else if (entidade === "users") {
+                return { ...reloadCache, users: reloadCache.users + 1 };
+            } else return reloadCache;
+        };
 
-    async function getCache() {
+        setReloadCache(newState());
+    };
+
+    async function getCache(options = { url: "", params: null, handle: null }) {
         try {
-            const { data: usuarios_res } = await api.get("/user/usuarios");
-            const { data: agentes_res } = await api.get("/agent/agentes");
+            const { data } = await api.get(options.url, {
+                params: options.params,
+            });
 
-            setUsers(usuarios_res.data);
-            setAgents(agentes_res.data);
-
+            options.handle(data.data);
             return;
         } catch (error) {
-            setUsers([]);
-            setAgents([]);
+            console.log(error);
+
+            options.handle([]);
         } finally {
             setPageState("done");
         }
     }
 
     useEffect(() => {
-        getCache();
-    }, [reloadCache]);
+        setPageState("loading");
+        getCache({ handle: setUsers, url: "/user/usuarios" });
+    }, [reloadCache.users]);
 
-    if (pageState === "loading") {
+    useEffect(() => {
+        setPageState("loading");
+        getCache({ handle: setAgents, url: "/agent/agentes" });
+    }, [reloadCache.agents]);
+
+    useEffect(() => {
+        setPageState("loading");
+        getCache({
+            handle: setFaturacoes,
+            url: "/fat/faturacoes",
+            params: {
+                dataInicio: hoje,
+                dataFim: amanha,
+                limit: 10,
+            },
+        });
+    }, [reloadCache.faturacoes]);
+
+    if (pageState === "loading" || !faturacoes || !agents || !users) {
         return (
             <div className="h-screen flex flex-col justify-center items-center gap-2">
-                <p>Carregando...</p>
+                <p>Actualizando...</p>
                 <AppLoader />
             </div>
         );
@@ -47,10 +85,8 @@ export default function CacheProvider({ children }) {
     return (
         <CacheContext.Provider
             value={{
-                entidades: { users, agents },
-                sellState: newSell,
-                handleSell,
-                setReloadCache,
+                entidades: { users, agents, faturacoes },
+                ReloadCache,
             }}
         >
             {children}

@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import { Plus } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
-import { useCache } from "../../hooks/useCache";
+import { useAction } from "../../hooks/useAction";
 
 import ResumeCards from "./ResumeCards";
 import FaturacoesRecentes from "./FaturacoesRecentes";
@@ -13,7 +13,7 @@ import AgentesDestacados from "./AgentesDestacados";
 
 export default function Dashboard() {
     const { user } = useAuth();
-    const { handleSell } = useCache();
+    const { handleSell } = useAction();
     return (
         <Box
             sx={{

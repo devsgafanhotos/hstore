@@ -1,21 +1,24 @@
-import MyDialog from "../../components/modal/MyDialog";
-import { Box, Button, TextField } from "@mui/material";
+import { Alert, Autocomplete, Box, Button } from "@mui/material";
 import { useState } from "react";
 import { FaIdCard, FaMoneyBill } from "react-icons/fa";
-import { AttachMoney, Money } from "@mui/icons-material";
+import { AttachMoney, CheckCircle } from "@mui/icons-material";
 
-import { useCache } from "../../hooks/useCache";
+import MyDialog from "../../components/modal/MyDialog";
+import { useAction } from "../../hooks/useAction";
 import FormFields from "../../components/form/FormFields";
 import AppLoader from "../../components/feedback/AppLoader";
+import { api } from "../../api/axios";
+import { useCache } from "../../hooks/useCache";
 import { useAlert } from "../../hooks/useAlert";
+import StyledInput from "../../components/form/StyledInput";
 
-export function DialogNovaFaturacao({}) {
-    const { sellState, handleSell } = useCache();
+export function DialogNovaFaturacao() {
+    const { sellState, handleSell } = useAction();
     const onCloseDialog = () => handleSell(false);
 
     return (
         <MyDialog
-            open={sellState.show}
+            open={sellState}
             onClose={onCloseDialog}
             title={"Nova Faturação"}
         >
@@ -26,11 +29,40 @@ export function DialogNovaFaturacao({}) {
 
 function FormNovaFaturacao({ onCloseDialog }) {
     const { setAlert } = useAlert();
+    const { ReloadCache, entidades } = useCache();
+    const { agents = [] } = entidades;
+
     const [formData, setFormData] = useState({
         valor_fisico: Number,
-        valor_eletronico: Number,
-        agente_id: Number,
+        valor_electronico: Number,
+        forma_pagamento: "",
+        nome_agente: "",
     });
+    const [formasPagamento, setFormaPagamento] = useState([])
+
+    const getFormaPagamento = async (nome_agente) => {
+        try {
+            if(!nome_agente) {
+                return;
+            }
+            const { data } = await api.get("/fat/forma_pagamento", {
+                params: { nome_agente: nome_agente },
+            });
+            if(data?.data?.formaPagamento) {
+                setFormaPagamento([data.data.formaPagamento]);
+                setFormData((prev) => ({
+                    ...prev,
+                    ["forma_pagamento"]: data.data.formaPagamento,
+                }));
+            } else {
+                setFormaPagamento(["Mensal", "Quinzenal"])
+            }
+            return data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    };
 
     const handleChange = ({ target }) => {
         setFormData((prev) => ({
@@ -40,15 +72,6 @@ function FormNovaFaturacao({ onCloseDialog }) {
     };
 
     const Fields = [
-        {
-            handleChange: handleChange,
-            icon: FaIdCard,
-            label: "Agente",
-            name: "agente_id",
-            required: true,
-            type: "number",
-            value: formData.agente_id,
-        },
         {
             handleChange: handleChange,
             icon: FaMoneyBill,
@@ -61,21 +84,21 @@ function FormNovaFaturacao({ onCloseDialog }) {
             handleChange: handleChange,
             icon: AttachMoney,
             label: "Valor Eletronico",
-            name: "valor_eletronico",
+            name: "valor_electronico",
             type: "number",
-            value: formData.valor_eletronico,
+            value: formData.valor_electronico,
         },
     ];
 
     const [formStatus, setFormStatus] = useState("typing");
+    const [formInfo, setFormInfo] = useState("");
     const isFormValid =
-        (formData.agente_id.length >= 4 &&
-            (formData.valor_eletronico.length >= 4 ||
-                formData.valor_fisico.length >= 4)) ||
-        formStatus === "loading";
+        formData.nome_agente.length >= 4 &&
+        (formData.valor_electronico.length >= 4 ||
+            formData.valor_fisico.length >= 4);
 
     const titleButton =
-        formStatus === "typing" ? (
+        formStatus !== "loading" ? (
             "Registrar"
         ) : (
             <>
@@ -87,39 +110,26 @@ function FormNovaFaturacao({ onCloseDialog }) {
         try {
             e.preventDefault();
             setFormStatus("loading");
-            setTimeout(() => {
-                onCloseDialog();
-                return setAlert({
-                    type: "SHOW",
-                    text: "Operação conscluída",
-                    style: "success",
-                });
-            }, 1000);
 
-            /*if (response?.success) {
+            const { data } = await api.post("/fat/cadastrar", formData);
+
+            if (data?.success) {
+                ReloadCache("faturacoes");
+                onCloseDialog();
                 setFormStatus("done");
+
                 return setAlert({
                     type: "SHOW",
-                    text: response.message,
+                    text: data.message,
                     style: "success",
-                });
-            }*/
-        } catch (error) {
-            if (error.code === "ERR_NETWORK") {
-                setAlert({
-                    type: "SHOW",
-                    text: error.message,
-                    style: "error",
-                });
-            } else {
-                setAlert({
-                    type: "SHOW",
-                    text: error.response?.data?.message,
-                    style: "warning",
                 });
             }
+        } catch (error) {
+            console.log(error);
 
-            setFormStatus("typing");
+            setFormInfo(error.response?.data?.message || error.message);
+
+            setFormStatus("warning");
         }
     };
 
@@ -129,7 +139,50 @@ function FormNovaFaturacao({ onCloseDialog }) {
             onSubmit={handleSubmit}
             sx={{ p: 1, paddingBottom: 3 }}
         >
-            <FormFields Fields={Fields} />
+            {formStatus === "warning" && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {formInfo}
+                </Alert>
+            )}
+
+            <FormFields Fields={Fields}>
+                <Autocomplete
+                    options={agents.map((user) => user.nome)}
+                    value={formData.nome_agente}
+                    onChange={(_, v) => {
+                        getFormaPagamento(v)
+                        return setFormData((prev) => ({
+                            ...prev,
+                            nome_agente: v ?? "",
+                        }));
+                    }}
+                    renderInput={(params) => (
+                        <StyledInput
+                            {...params}
+                            required={true}
+                            label="Agente"
+                        />
+                    )}
+                />
+                <Autocomplete
+                    options={[...formasPagamento]}
+                    value={formData.forma_pagamento}
+                    onChange={(_, v) => {
+                        return setFormData((prev) => ({
+                            ...prev,
+                            forma_pagamento: v ?? "",
+                        }));
+                    }}
+                    renderInput={(params) => (
+                        <StyledInput
+                            {...params}
+                            required={true}
+                            label="Forma de Pagamento"
+                        />
+                    )}
+                />
+            </FormFields>
+
             <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
                 <Button variant="outlined" onClick={onCloseDialog}>
                     Cancelar
@@ -138,7 +191,7 @@ function FormNovaFaturacao({ onCloseDialog }) {
                     type="submit"
                     size="large"
                     variant="contained"
-                    disabled={!isFormValid}
+                    disabled={!isFormValid || formStatus === "loading"}
                 >
                     {titleButton}
                 </Button>

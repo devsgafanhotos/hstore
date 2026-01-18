@@ -25,6 +25,19 @@ class classUserServices {
             };
         }
 
+        const responseNome = await user_model.findOne({
+            where: { nome: usuario.nome },
+            raw: true,
+        });
+
+        if (responseNome) {
+            return {
+                success: false,
+                status: 409,
+                message: "Nome indisponível!",
+            };
+        }
+
         const responseTelefone = await this.verifyUserTelefone(
             usuario.telefone
         );

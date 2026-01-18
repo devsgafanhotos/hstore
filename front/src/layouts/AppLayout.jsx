@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Fade } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Header from "../partials/template/Header";
 import Sidebar from "../partials/template/Sidebar";
 import ScrollTop from "../components/feedback/ScrollTop";
 import { DialogNovaFaturacao } from "../pages/Faturacoes/Cadastrar";
 import { useAuth } from "../hooks/useAuth";
-import { motion } from "framer-motion";
 
 export default function AppLayout() {
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -14,13 +13,10 @@ export default function AppLayout() {
     const { user } = useAuth();
 
     return (
-        <Box sx={{ display: "flex", height: "100vh", border: "1px solid" }}>
+        <Box sx={{ display: "flex", height: "100vh" }}>
             <Header drawerState={{ openDrawer, setOpenDrawer }} />
             <Sidebar drawerState={{ openDrawer, setOpenDrawer }} />
-            <motion.div
-                style={{ display: "flex", flex: "1", flexFlow: "column" }}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
+            <Fade in={1000}
             >
                 <Box
                     ref={boxRef}
@@ -31,6 +27,7 @@ export default function AppLayout() {
                         flexGrow: 1,
                         overflowY: "scroll",
                         p: 1,
+                        pt:2, 
                         mt: 7,
                     }}
                 >
@@ -38,7 +35,7 @@ export default function AppLayout() {
                     {user && <DialogNovaFaturacao />}
                     <ScrollTop target={() => boxRef.current} />
                 </Box>
-            </motion.div>
+            </Fade>
         </Box>
     );
 }

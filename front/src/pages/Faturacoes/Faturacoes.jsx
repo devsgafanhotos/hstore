@@ -9,7 +9,6 @@ import {
     Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-
 import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -17,39 +16,45 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { api } from "../../api/axios";
 import MyListItems from "../../components/shower/MyListItems";
-import { FaFileInvoiceDollar, FaQuestion } from "react-icons/fa6";
+import { FaFileInvoiceDollar, FaPlus, FaQuestion } from "react-icons/fa6";
 import { FaFilter } from "react-icons/fa";
 import MyDialog from "../../components/modal/MyDialog";
+import { useAction } from "../../hooks/useAction";
 import { useCache } from "../../hooks/useCache";
+import { amanha, hoje } from "../../utils/date";
 
 export default function Faturacoes() {
     const [openDialog, setOpenDialog] = useState(false);
-    const { handleSell } = useCache();
+    const { handleSell } = useAction();
+    const { faturacoes: initialFaturacoes } = useCache().entidades;
+
     const onCloseDialog = () => setOpenDialog(false);
     const onOpenDialog = () => setOpenDialog(true);
     const [dialogTitle, setDialogTitle] = useState("");
 
-    const [faturacoes, setFaturacoes] = useState([]);
+    const [faturacoes, setFaturacoes] = useState(null);
     const [filterValue, setFilterValue] = useState({
-        dataInicio: new Date(0),
-        dataFim: new Date(),
+        dataInicio: hoje,
+        dataFim: amanha,
         forma_pagamento: null,
         tipo_faturacao: null,
+        nome_agente: null,
     });
     const [pageState, setPageState] = useState("loading");
 
-    async function getFaturacoes() {
+    async function getFaturacoes(params) {
         try {
-            const url = "/fat/faturacoes";
-            const { data } = await api.get(url, {
+            const { data } = await api.get("/fat/faturacoes", {
                 params: {
-                    dataInicio: new Date(filterValue.dataInicio),
-                    dataFim: new Date(filterValue.dataFim),
-                    forma_pagamento: filterValue.forma_pagamento,
-                    tipo_faturacao: filterValue.tipo_faturacao,
+                    dataInicio: params.dataInicio,
+                    dataFim: params.dataFim,
+                    forma_pagamento: params.forma_pagamento,
+                    tipo_faturacao: params.tipo_faturacao,
+                    nome_agente: params.nome_agente,
                 },
             });
 
+            setFilterValue({ ...params });
             return setFaturacoes([...data.data]);
         } catch (error) {
             console.log(error);
@@ -61,13 +66,15 @@ export default function Faturacoes() {
 
     const handleFilter = (newFilter) => {
         setFilterValue(newFilter);
+        getFaturacoes(newFilter);
     };
 
     useEffect(() => {
-        setPageState("loading");
-        getFaturacoes();
-    }, [filterValue]);
+        setFaturacoes([...initialFaturacoes]);
+        setPageState("done");
+    }, [initialFaturacoes]);
 
+    // eslint-disable-next-line no-unused-vars
     function MyToolIcon({ title = "Title", Icon = FaQuestion, handleClick }) {
         return (
             <Tooltip title={title}>
@@ -88,10 +95,15 @@ export default function Faturacoes() {
             </Tooltip>
         );
     }
+    const buttonAdd = (
+        <IconButton onClick={() => handleSell(true)}>
+            <FaPlus color="#F37021" size={25} />
+        </IconButton>
+    );
 
     return (
-        <Box flex={"1"} padding={0}>
-            <Box py={{ sx: 0, md: 1 }} display={"flex"} justifyContent={"end"}>
+        <Box flex={"1"}>
+            <Box display={"flex"} justifyContent={"end"}>
                 <Box
                     sx={{
                         marginBottom: 1,
@@ -122,7 +134,7 @@ export default function Faturacoes() {
                             flexWrap: "wrap",
                             columnGap: 1,
                             padding: 1,
-                            paddingRight: 0,
+                            paddingRight: 2,
                         }}
                     >
                         <Typography variant="body2" color="text.secondary">
@@ -137,7 +149,7 @@ export default function Faturacoes() {
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary">
-                            {filterValue.agente_id ?? ""}
+                            {filterValue.nome_agente?.split(" ")[0] ?? ""}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             {filterValue.forma_pagamento ?? ""}
@@ -152,34 +164,53 @@ export default function Faturacoes() {
                 ListItems={faturacoes}
                 title="Faturações"
                 pageState={pageState}
-                buttonPluss={{
-                    handleClick: () => handleSell(true),
-                }}
+                extraButton={buttonAdd}
             />
             <MyDialog
                 open={openDialog}
                 onClose={onCloseDialog}
                 title={dialogTitle}
             >
-                <FormFilter
-                    onCloseDialog={onCloseDialog}
-                    handleFilter={handleFilter}
-                />
+                {dialogTitle === "Filtrar Faturações" ? (
+                    <FormFilter
+                        onCloseDialog={onCloseDialog}
+                        handleFilter={handleFilter}
+                        initialFilter={filterValue}
+                    />
+                ) : (
+                    <>Resumos</>
+                )}
             </MyDialog>
         </Box>
     );
 }
 
-function FormFilter({ onCloseDialog, handleFilter }) {
+function FormFilter({ onCloseDialog, handleFilter, initialFilter }) {
     const [formFilter, setFormFilter] = useState({
-        dataInicio: new Date(0).toLocaleString(),
-        dataFim: new Date().toLocaleString(),
-        forma_pagamento: null,
-        tipo_faturacao: null,
+        dataInicio: initialFilter.dataInicio,
+        dataFim: initialFilter.dataFim,
+        forma_pagamento: initialFilter.forma_pagamento,
+        tipo_faturacao: initialFilter.tipo_faturacao,
+        nome_agente: initialFilter.nome_agente,
     });
+    const { agents } = useCache().entidades;
+
     return (
         <Box>
             <Stack spacing={2} mt={1}>
+                <Autocomplete
+                    options={agents.map((agent) => agent.nome)}
+                    value={formFilter.nome_agente}
+                    onChange={(_, v) =>
+                        setFormFilter({
+                            ...formFilter,
+                            nome_agente: v,
+                        })
+                    }
+                    renderInput={(params) => (
+                        <TextField {...params} label="Agente" fullWidth />
+                    )}
+                />
                 <Autocomplete
                     options={["Físico", "Electrônico"]}
                     value={formFilter.tipo_faturacao}
@@ -199,7 +230,7 @@ function FormFilter({ onCloseDialog, handleFilter }) {
                 />
                 <Autocomplete
                     options={["Quinzenal", "Mensal"]}
-                    value={dayjs(formFilter.forma_pagamento)}
+                    value={formFilter.forma_pagamento}
                     onChange={(_, v) =>
                         setFormFilter({
                             ...formFilter,
@@ -239,14 +270,16 @@ function FormFilter({ onCloseDialog, handleFilter }) {
                 <Box>
                     <Button
                         variant="outlined"
-                        handleClick={onCloseDialog}
+                        onClick={onCloseDialog}
                         sx={{ marginRight: 2 }}
                     >
                         Cancelar
                     </Button>
                     <Button
-                        handleClick={() => {
+                        variant="contained"
+                        onClick={() => {
                             handleFilter(formFilter);
+                            onCloseDialog();
                         }}
                     >
                         Aplicar

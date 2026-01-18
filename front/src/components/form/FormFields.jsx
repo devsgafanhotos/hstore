@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Visibility, VisibilityOff, PersonOutline } from "@mui/icons-material";
 
 export default function FormFields({
+    children,
     Fields = [
         {
             label: "",
@@ -13,6 +14,7 @@ export default function FormFields({
             icon: PersonOutline,
             handleChange: "",
             required: Boolean,
+            ExtraInputProps: {},
         },
     ],
 }) {
@@ -35,9 +37,10 @@ export default function FormFields({
 
     return (
         <Stack spacing={2} py={1}>
+            {children}
             {Fields.map((Field) => (
                 <StyledInput
-                    key={Field.label}
+                    key={Field.name}
                     label={Field.label}
                     name={Field.name}
                     type={
@@ -51,7 +54,11 @@ export default function FormFields({
                     handleChangeInput={Field.handleChange}
                     required={Field.required}
                     icon={<Field.icon fontSize="small" />}
-                    InputProps={Field.type === "password" && PasswordProps}
+                    InputProps={
+                        Field.type === "password"
+                            ? PasswordProps
+                            : Field.ExtraInputProps
+                    }
                 />
             ))}
         </Stack>

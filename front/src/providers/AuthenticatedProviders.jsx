@@ -1,4 +1,5 @@
 import { useAuth } from "../hooks/useAuth";
+import ActionProvider from "./ActionProvider";
 import CacheProvider from "./CacheProvider";
 
 export default function AuthenticatedProviders({ children }) {
@@ -10,7 +11,7 @@ export default function AuthenticatedProviders({ children }) {
 
     return (
         <CacheProvider>
-            <>{children}</>
+            <ActionProvider>{children}</ActionProvider>
         </CacheProvider>
     );
 }

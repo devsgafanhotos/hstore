@@ -121,7 +121,7 @@ export default function Login({}) {
                         boxShadow: "0 20px 40px rgba(0,0,0,.1)",
                     }}
                 >
-                    <CardHeader title="Bem-vindo" />
+                    <CardHeader title={<>Bem-vindo</>} />
                     <CardContent
                         sx={{ p: 3, pt: 3, pb: 5, display: "grid", gap: 3 }}
                     >

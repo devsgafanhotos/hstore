@@ -1,15 +1,23 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa6";
+
 import MyListItems from "../../components/shower/MyListItems";
 import { useCache } from "../../hooks/useCache";
 import SearchField from "../../components/shower/SearchField";
+import MyDialog from "../../components/modal/MyDialog";
+import FormCadastrarAgente from "./Cadastrar";
 
 let agenteBase = [];
 const max_items = 50;
 export default function Agentes() {
     const navigate = useNavigate();
     const { agents } = useCache().entidades;
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const onCLoseDialog = () => setOpenDialog(false);
+    const onOpenDialog = () => setOpenDialog(true);
 
     const [agentes, setAgentes] = useState([]);
     const [filterValue, setFilterValue] = useState("");
@@ -19,8 +27,10 @@ export default function Agentes() {
         try {
             agenteBase.push(...agents);
 
-            return setAgentes(agents?.slice(-max_items));
+            return setAgentes(agents?.slice(0, max_items));
         } catch (error) {
+            console.log(error);
+
             setAgentes([]);
         } finally {
             setPageState("done");
@@ -58,18 +68,40 @@ export default function Agentes() {
         setFilterValue("");
         setPageState("loading");
         getAgente();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const buttonAdd = (
+        <IconButton onClick={onOpenDialog}>
+            <FaPlus color="#F37021" size={25} />
+        </IconButton>
+    );
+
+    const handleShowProfile = (agent) => {
+        navigate(`/subagente/${agent.id}`, { state: { agent } });
+    };
 
     return (
         <Box sx={{ flex: "1" }}>
-            <SearchField filterValue={filterValue} setFilterValue={setFilterValue} />
+            <SearchField
+                filterValue={filterValue}
+                setFilterValue={setFilterValue}
+            />
             <MyListItems
                 ListItems={agentes}
                 title={"Subagentes"}
+                extraButton={buttonAdd}
                 pageState={pageState}
-                buttonPluss={{ to: `/subagente/cadastrar` }}
-                handleItemClick={(id) => navigate(`/subagente/${id}`)}
+                handleItemClick={handleShowProfile}
             />
+
+            <MyDialog
+                open={openDialog}
+                onClose={onCLoseDialog}
+                title="Novo Agente"
+            >
+                <FormCadastrarAgente onCLoseDialog={onCLoseDialog} />
+            </MyDialog>
         </Box>
     );
 }

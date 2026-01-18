@@ -16,6 +16,19 @@ class classAgentServices {
             };
         }
 
+        const responseNome = await agents_model.findOne({
+            where: { nome: agente.nome },
+            raw: true,
+        });
+
+        if (responseNome) {
+            return {
+                success: false,
+                status: 409,
+                message: "Nome indisponível!",
+            };
+        }
+
         const responseTelefone = await this.verifyAgentTelefone(
             agente.telefone
         );
@@ -59,7 +72,7 @@ class classAgentServices {
             ],
             where: idCondition,
             include: [{ model: user_model, as: "usuario", attributes: [] }],
-            order: ["nome"],
+            order: [["data_criacao", "DESC"]],
         });
 
         if (!agentes_encontrados) {

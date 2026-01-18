@@ -1,13 +1,6 @@
-import * as React from "react";
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
-    DialogActions,
-    Button,
-    Stack,
-    Autocomplete,
-    TextField,
     Drawer,
     Box,
     Divider,
@@ -47,7 +40,11 @@ export default function MyDialog({
 
     function MyDialogContent() {
         return (
-            <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>{children}</Box>
+            <>
+                <Box sx={{ overflowY: "auto", maxHeight: "100%" }}>
+                    {children}
+                </Box>
+            </>
         );
     }
 

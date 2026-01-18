@@ -9,38 +9,23 @@ import {
     CardContent,
     CardHeader,
     ListItemText,
-    IconButton,
 } from "@mui/material";
 import AppLoader from "../feedback/AppLoader";
-import { Link } from "react-router-dom";
-import { FaPlus, FaQuestion } from "react-icons/fa";
+import { FaQuestion } from "react-icons/fa";
 
 export default function MyListItems({
-    ListItems = [],
+    ListItems = null,
+    // eslint-disable-next-line no-unused-vars
     ItemIcone = FaQuestion,
     pageState = "",
     title = "Items",
     extraButton,
-    buttonPluss = { to: null, handleClick: null },
     handleItemClick,
 }) {
     const CardHeaderTitle = (
         <div className="flex justify-between items-center">
             {title}
             {extraButton}
-            {(buttonPluss.to || buttonPluss.handleClick) && (
-                <>
-                    {buttonPluss.to ? (
-                        <Link to={buttonPluss.to}>
-                            <FaPlus color="#F37021" />
-                        </Link>
-                    ) : (
-                        <IconButton onClick={buttonPluss.handleClick}>
-                            <FaPlus color="#F37021" />
-                        </IconButton>
-                    )}
-                </>
-            )}
         </div>
     );
 
@@ -60,7 +45,7 @@ export default function MyListItems({
                     padding: 0,
                 }}
             >
-                {pageState === "loading" ? (
+                {pageState === "loading" || !ListItems ? (
                     <div className="p-4 flex flex-col justify-center items-center gap-2">
                         <p>Buscando...</p>
                         <AppLoader />
@@ -87,6 +72,7 @@ export default function MyListItems({
                         ) : (
                             ListItems.map((listItem) => (
                                 <MyListItem
+                                    key={listItem?.id}
                                     listItem={listItem}
                                     handleClick={handleItemClick}
                                 />
@@ -99,13 +85,12 @@ export default function MyListItems({
     );
 }
 
-export function MyListItem({ listItem, Icon, handleClick }) {
+export function MyListItem({ listItem, handleClick }) {
     return (
         <>
             <ListItem
-                onClick={() => handleClick(listItem.id)}
+                onClick={() => handleClick?.(listItem)}
                 sx={{ padding: 0.5, my: 0.5 }}
-                key={listItem?.id}
             >
                 <ListItemButton
                     sx={{
@@ -169,6 +154,7 @@ export function MyListItem({ listItem, Icon, handleClick }) {
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function getMoeda(valor) {
     if (!valor) {
         return null;

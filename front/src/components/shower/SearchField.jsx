@@ -4,7 +4,7 @@ import { Box, IconButton } from "@mui/material";
 export default function SearchField({
     filterValue,
     setFilterValue,
-    placeholder = "Filtrar Por Nome",
+    placeholder = "Filtrar Por: Nome || Telefone || ID",
 }) {
     return (
         <Box paddingBottom={1.5}>

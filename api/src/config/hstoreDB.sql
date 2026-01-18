@@ -66,3 +66,29 @@ CREATE TABLE
         foreign key (`agente_id`) references `hstore`.`agentes` (`id_agente`) ON DELETE CASCADE,
         foreign key (`usuario_id`) references `hstore`.`usuarios` (`id_usuario`) ON DELETE CASCADE
     ) ENGINE = InnoDB;
+
+ALTER TABLE pagamentos
+ADD UNIQUE KEY uk_pagamento_agente_data_correspondente (
+    agente_id,
+    data_correspondente,
+    parcela
+);
+
+CREATE INDEX idx_faturacoes_forma_data_agente
+ON faturacoes (forma_pagamento, data_faturacao, agente_id);
+
+CREATE INDEX idx_pagamentos_agente_data_parcela
+ON pagamentos (agente_id, data_correspondente, parcela);
+
+
+SELECT nome, COUNT(*)
+FROM agentes
+GROUP BY nome
+HAVING COUNT(*) > 1;
+
+ALTER TABLE agentes
+ADD CONSTRAINT uq_agentes_nome UNIQUE (nome);
+
+
+ALTER TABLE usuarios
+MODIFY tipo VARCHAR(50) NOT NULL default 'Normal';

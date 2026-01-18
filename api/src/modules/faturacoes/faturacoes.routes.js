@@ -17,4 +17,11 @@ faturacaoRouter.get(
     FaturacoesControllers.getFaturacoes
 );
 
+faturacaoRouter.get(
+    "/forma_pagamento",
+    AuthMiddleware.authanticateAccess,
+    AuthMiddleware.verifyRole(["Admin", "Normal"]),
+    FaturacoesControllers.getFormaPagamento
+);
+
 export default faturacaoRouter;

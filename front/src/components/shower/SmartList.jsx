@@ -198,9 +198,11 @@ export function MyListItem({ listItem, handleClick, index, title }) {
                                 fontSize={"1rem"}
                                 textAlign={"left"}
                             >
-                                <p className="text-center md:hidden">
-                                    {listItem?.parcela} Parcela{" "}
-                                </p>
+                                {listItem?.parcela && (
+                                    <p className="text-center md:hidden">
+                                        {listItem?.parcela} Parcela{" "}
+                                    </p>
+                                )}
                             </Typography>
                         </div>
                     </div>

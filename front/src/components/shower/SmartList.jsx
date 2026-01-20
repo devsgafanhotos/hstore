@@ -27,6 +27,7 @@ export default function SmartList({
     FormFilter,
     PlusAction,
     extraButton,
+    // eslint-disable-next-line no-unused-vars
     Labels,
 }) {
     const CardHeaderTitle = (

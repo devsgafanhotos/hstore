@@ -1,19 +1,19 @@
 import { Box, Card, CardContent, Chip, Grid, Typography } from "@mui/material";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
     Users,
     TrendingUp,
     TrendingDown,
     DollarSign,
-    Wifi,
     BoxIcon,
 } from "lucide-react";
 
-export default function ResumeCards({}) {
+export default function ResumeCards() {
     const resumes = [
         {
             title: "Vendas Hoje",
-            value: "245.000 Kz",
+            value: "00",
             trend: "up",
             trendValue: "+12%",
             icon: DollarSign,
@@ -21,7 +21,7 @@ export default function ResumeCards({}) {
         },
         {
             title: "Vendas",
-            value: "18",
+            value: "00",
             trend: "up",
             trendValue: "+4",
             icon: BoxIcon,
@@ -29,7 +29,7 @@ export default function ResumeCards({}) {
         },
         {
             title: "Novos Sub-agentes",
-            value: "6",
+            value: "00",
             trend: "up",
             trendValue: "+2",
             icon: Users,

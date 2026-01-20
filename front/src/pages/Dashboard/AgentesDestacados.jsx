@@ -15,15 +15,15 @@ import { getMoeda } from "../../components/shower/SmartList";
 const maxVenda = 100000;
 export default function AgentesDestacados() {
     const agentesEmDestaque = [
-        { nome: "Hermenegildo Wilson", total: 45000 },
-        { nome: "Bengui Bena", total: 25000 },
-        { nome: "Egas Ribeiro", total: 15000 },
+        { nome: "Agente", total: 45000 },
+        { nome: "Agente", total: 25000 },
+        { nome: "Agente", total: 15000 },
     ];
 
     return (
         <Card sx={{ mb: 3 }}>
             <CardHeader
-                title="Ranking dos Sub-agentes"
+                title="Ranking mensal"
                 sx={{ borderBottom: "1px solid #f0f0f0", paddingTop: "17px" }}
             />
             <CardContent>

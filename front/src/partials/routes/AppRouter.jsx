@@ -13,6 +13,7 @@ import Usuario from "../../pages/Usuarios/Usuario";
 import { useAuth } from "../../hooks/useAuth";
 import Profile from "../../components/shower/Profile.jsx";
 import Pagamentos from "../../pages/Pagamentos/pagamentos.jsx";
+import { Box, Chip } from "@mui/material";
 
 export default function AppRouter() {
     const { user } = useAuth();
@@ -22,7 +23,14 @@ export default function AppRouter() {
                 <Route element={<AppLayout />}>
                     <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/relatorios" element={<>Lil</>} />
+                        <Route
+                            path="/relatorios"
+                            element={
+                                <>
+                                    <Chip label="Pagina em contrução..." sx={{marginTop: 25, fontSize: 30, padding: 5}} />
+                                </>
+                            }
+                        />
                         <Route path="/pagamentos" element={<Pagamentos />} />
                         <Route path="/faturacoes" element={<Faturacoes />} />
 
@@ -37,7 +45,10 @@ export default function AppRouter() {
                             path="/usuario/:id_usuario"
                             element={<Usuario />}
                         />
-                        <Route path="/perfil" element={<Profile ItemProfile={user} />} />
+                        <Route
+                            path="/perfil"
+                            element={<Profile ItemProfile={user} />}
+                        />
                         <Route path="/logout" element={<Logout />} />
 
                         <Route path="*" element={<h1>Not Found</h1>} />

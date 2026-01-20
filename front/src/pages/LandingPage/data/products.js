@@ -20,7 +20,7 @@ export const products = [
         title: "Samsung S24 Ultra",
         category: "Smartphones",
         price: "1.350.000 Kz",
-        image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&q=80&w=800", 
+        image: "https://images.unsplash.com/photo-1610945265078-3858a0b5d8f4?auto=format&fit=crop&q=80&w=800", 
         //"https://images.unsplash.com/photo-1610945265078-3858a0b5d8f4?auto=format&fit=crop&q=80&w=800",
         badge: "Promo",
     },

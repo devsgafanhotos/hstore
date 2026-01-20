@@ -26,7 +26,7 @@ import { useAlert } from "../../hooks/useAlert";
 export default function Pagamentos() {
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogTitle, setDialogTitle] = useState(false);
-    const { setAlert } = useAlert()
+    const { setAlert } = useAlert();
 
     const onCloseDialog = () => setOpenDialog(false);
     const onOpenDialog = () => setOpenDialog(true);
@@ -54,18 +54,24 @@ export default function Pagamentos() {
                     estado: params.estado,
                 },
             });
-            
+
             if (data?.message?.includes("Ainda não é período")) {
                 setAlert({
                     type: "SHOW",
                     text: data.message,
                     style: "warning",
-                })
+                });
             }
 
             setFilterValue({ ...params });
             return setPagamentos({ data: data.data, meta: data.meta });
         } catch (error) {
+            alert(error?.message)
+            setAlert({
+                type: "SHOW",
+                text: error?.message,
+                style: "warning",
+            });
             console.log(error);
             setPagamentos({ data: [], meta: null });
         } finally {

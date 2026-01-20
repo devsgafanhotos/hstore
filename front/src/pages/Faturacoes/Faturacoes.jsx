@@ -22,8 +22,10 @@ import MyDialog from "../../components/modal/MyDialog";
 import { useAction } from "../../hooks/useAction";
 import { useCache } from "../../hooks/useCache";
 import { amanha, hoje } from "../../utils/date";
+import { useAlert } from "../../hooks/useAlert";
 
 export default function Faturacoes() {
+    const { setAlert } = useAlert();
     const [openDialog, setOpenDialog] = useState(false);
     const { handleSell } = useAction();
     const { faturacoes: initialFaturacoes } = useCache().entidades;
@@ -59,6 +61,12 @@ export default function Faturacoes() {
             setFilterValue({ ...params });
             return setFaturacoes([...data.data]);
         } catch (error) {
+            alert(error?.message)
+            setAlert({
+                type: "SHOW",
+                text: error?.message,
+                style: "warning",
+            });
             console.log(error);
             setFaturacoes([]);
         } finally {

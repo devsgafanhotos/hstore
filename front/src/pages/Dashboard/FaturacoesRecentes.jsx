@@ -1,5 +1,5 @@
 import { Box, Button } from "@mui/material";
-import MyListItems from "../../components/shower/MyListItems";
+import SmartList from "../../components/shower/SmartList";
 import { MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCache } from "../../hooks/useCache";
@@ -21,10 +21,10 @@ export default function FaturacoesRecentes() {
     );
 
     return (
-        <MyListItems
+        <SmartList
             title={"Faturaçõees Recentes"}
             extraButton={extraButton}
-            ListItems={faturacoes.slice(0, 5)}
+            ListItems={faturacoes.slice(0, 9)}
         />
     );
 }

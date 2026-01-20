@@ -4,16 +4,16 @@ import { Router } from "express";
 const pagamentoRouter = Router();
 
 pagamentoRouter.post(
-    "/cadastrar",
+    "/registrar",
     AuthMiddleware.authanticateAccess,
     AuthMiddleware.verifyRole(["Admin", "Normal"]),
-    PagamentosControllers.cadastrar
+    PagamentosControllers.registrar
 );
 
 pagamentoRouter.get(
     "/pagamentos",
-    //AuthMiddleware.authanticateAccess,
-    //AuthMiddleware.verifyRole(["Admin", "Normal"]),
+    AuthMiddleware.authanticateAccess,
+    AuthMiddleware.verifyRole(["Admin", "Normal"]),
     PagamentosControllers.getPagamentoss
 );
 

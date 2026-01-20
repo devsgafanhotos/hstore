@@ -7,10 +7,10 @@ USE `hstore`;
 CREATE TABLE
     IF NOT EXISTS `hstore`.`usuarios` (
         `id_usuario` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        `nome` VARCHAR(45) NOT NULL,
+        `nome` VARCHAR(45) NOT NULL unique,
         `telefone` VARCHAR(45) NOT NULL UNIQUE,
         `email` VARCHAR(45) NOT NULL UNIQUE,
-        `tipo` ENUM ('Admin', 'Normal', 'Root') NOT NULL default 'Normal',
+        `tipo` VARCHAR(45) NOT NULL default 'Normal',
         `senha` TEXT NOT NULL,
         `data_criacao` datetime NOT NULL default current_timestamp,
         `ultima_actualizacao` datetime NOT NULL default current_timestamp,
@@ -30,7 +30,7 @@ CREATE TABLE
     IF NOT EXISTS `hstore`.`agentes` (
         `id_agente` INT NOT NULL PRIMARY KEY,
         `telefone` INT NOT NULL unique,
-        `nome` VARCHAR(45) NOT NULL,
+        `nome` VARCHAR(45) NOT NULL unique,
         `data_criacao` DATETIME NOT NULL default current_timestamp,
         `estado` ENUM ('Ativo', 'Inativo') NOT NULL default 'Ativo',
         `ultima_actualizacao` DATETIME NOT NULL default current_timestamp,
@@ -81,10 +81,15 @@ CREATE INDEX idx_pagamentos_agente_data_parcela
 ON pagamentos (agente_id, data_correspondente, parcela);
 
 
-SELECT nome, COUNT(*)
+SELECT *
 FROM agentes
-GROUP BY nome
-HAVING COUNT(*) > 1;
+WHERE nome IN (
+    SELECT nome
+    FROM agentes
+    GROUP BY nome
+    HAVING COUNT(*) > 1
+)
+ORDER BY nome;
 
 ALTER TABLE agentes
 ADD CONSTRAINT uq_agentes_nome UNIQUE (nome);

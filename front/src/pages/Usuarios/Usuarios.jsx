@@ -1,7 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MyListItems from "../../components/shower/MyListItems";
+import SmartList from "../../components/shower/SmartList";
 import { useCache } from "../../hooks/useCache";
 import SearchField from "../../components/shower/SearchField";
 import { FaPlus } from "react-icons/fa6";
@@ -47,7 +47,7 @@ export default function Usuarios() {
                 if (
                     String(nome).includes(filterValue?.toLocaleLowerCase()) ||
                     String(telefone).includes(
-                        filterValue?.toLocaleLowerCase()
+                        filterValue?.toLocaleLowerCase(),
                     ) ||
                     String(id).includes(filterValue?.toLocaleLowerCase())
                 )
@@ -69,28 +69,25 @@ export default function Usuarios() {
         getUsuarios();
     }, []);
 
-    const buttonAdd = (
-        <IconButton onClick={onOpenDialog}>
-            <FaPlus color="#F37021" size={25} />
-        </IconButton>
-    );
-
     const handleShowProfile = (user) => {
         navigate(`/usuario/${user.id}`, { state: { user } });
     };
 
     return (
         <Box sx={{ flex: "1" }}>
-            <SearchField
-                filterValue={filterValue}
-                setFilterValue={setFilterValue}
-            />
-            <MyListItems
+            <SmartList
                 ListItems={usuarios}
                 title={"Usuarios"}
-                extraButton={buttonAdd}
                 pageState={pageState}
                 handleItemClick={handleShowProfile}
+                PlusAction={onOpenDialog}
+                FormFilter={
+                    <SearchField
+                        filterValue={filterValue}
+                        setFilterValue={setFilterValue}
+                    />
+                }
+                Labels={["id", "nome", "telefone"]}
             />
 
             <MyDialog

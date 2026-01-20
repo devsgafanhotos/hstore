@@ -11,9 +11,9 @@ import {
     Typography,
 } from "@mui/material";
 import React from "react";
-import { getMoeda } from "../../components/shower/MyListItems";
+import { getMoeda } from "../../components/shower/SmartList";
 const maxVenda = 100000;
-export default function AgentesDestacados({}) {
+export default function AgentesDestacados() {
     const agentesEmDestaque = [
         { nome: "Hermenegildo Wilson", total: 45000 },
         { nome: "Bengui Bena", total: 25000 },

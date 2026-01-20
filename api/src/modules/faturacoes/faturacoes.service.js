@@ -74,8 +74,8 @@ class classFaturacoesServices {
             id_faturacao,
             tipo_faturacao,
             forma_pagamento,
-            limit = 1000,
-        }
+            limit = 300,
+        },
     ) {
         const agenteEncontrado = await agent_model.findOne({
             where: { nome: nome_agente },
@@ -91,7 +91,8 @@ class classFaturacoesServices {
         }
 
         const idAgenteCondition =
-            (agenteEncontrado?.id_agente) && where(col("agente_id"), agenteEncontrado?.id_agente);
+            agenteEncontrado?.id_agente &&
+            where(col("agente_id"), agenteEncontrado?.id_agente);
 
         const idFaturacaoCondition =
             id_faturacao && where(col("id_faturacao"), id_faturacao);
@@ -108,7 +109,7 @@ class classFaturacoesServices {
             attributes: [
                 ["id_facturacao", "id"],
                 "valor",
-                ["data_faturacao", "dataFaturacao"],
+                ["data_faturacao", "data"],
                 ["tipo_faturacao", "tipoFaturacao"],
                 ["forma_pagamento", "formaPagamento"],
                 "agente_id",
@@ -130,6 +131,20 @@ class classFaturacoesServices {
             order: [["data_faturacao", "DESC"]],
         });
 
+        const totalVendido = await faturacoes_model.sum("valor", {
+            where: {
+                [Op.and]: [
+                    where(col("data_faturacao"), {
+                        [Op.between]: [dataInicio, dataFim],
+                    }),
+                    idAgenteCondition,
+                    idFaturacaoCondition,
+                    tipoFaturacaoCondition,
+                    formaPagamentoCondition,
+                ],
+            },
+        });
+
         const meta = {
             dataInicio,
             dataFim,
@@ -137,7 +152,8 @@ class classFaturacoesServices {
             id_faturacao,
             tipo_faturacao,
             forma_pagamento,
-            faturacoes: faturacoes_encontradas.length,
+            totalVendido,
+            total: faturacoes_encontradas.length,
         };
         if (!faturacoes_encontradas) {
             return {

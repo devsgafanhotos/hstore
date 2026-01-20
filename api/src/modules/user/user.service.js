@@ -171,7 +171,7 @@ class classUserServices {
                 "telefone",
                 "email",
                 ["tipo", "role"],
-                ["data_criacao", "dataCadastro"],
+                ["data_criacao", "data"],
             ],
             where: idCondition,
             order: ["nome"],

@@ -12,6 +12,7 @@ import Agente from "../../pages/Agentes/Agente";
 import Usuario from "../../pages/Usuarios/Usuario";
 import { useAuth } from "../../hooks/useAuth";
 import Profile from "../../components/shower/Profile.jsx";
+import Pagamentos from "../../pages/Pagamentos/pagamentos.jsx";
 
 export default function AppRouter() {
     const { user } = useAuth();
@@ -21,8 +22,8 @@ export default function AppRouter() {
                 <Route element={<AppLayout />}>
                     <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/relatorios" element={<>/relatorios</>} />
-                        <Route path="/pagamentos" element={<>/pagamentos</>} />
+                        <Route path="/relatorios" element={<>Lil</>} />
+                        <Route path="/pagamentos" element={<Pagamentos />} />
                         <Route path="/faturacoes" element={<Faturacoes />} />
 
                         <Route path="/subagentes" element={<Agentes />} />

@@ -3,10 +3,6 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
     typography: {
         fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-        button: {
-            textTransform: "none",
-            fontWeight: 500,
-        },
         h1: {
             fontWeight: 800,
             fontSize: "3.5rem",
@@ -23,11 +19,16 @@ const theme = createTheme({
             fontWeight: 600,
             fontSize: "1.5rem",
         },
-        button: {
-            textTransform: "none",
-            fontWeight: 600,
-            borderRadius: "8px",
+        h6: { fontWeight: 700, fontSize: "1rem" },
+        caption: {
+            fontSize: "0.75rem",
+            color: "#94A3B8",
+            fontWeight: 500,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
         },
+        subtitle1: { fontWeight: 600, fontSize: "0.9rem" },
+        body2: { fontSize: "0.85rem" },
     },
     palette: {
         mode: "light",
@@ -81,6 +82,7 @@ const theme = createTheme({
                     borderRadius: 8,
                     textTransform: "none",
                     fontSize: "1rem",
+                    fontWeight: 600,
                     color: "background.paper",
                 },
             },
@@ -98,6 +100,18 @@ const theme = createTheme({
                     padding: 2,
                     paddingLeft: "8px",
                     paddingRight: "8px",
+                },
+            },
+        },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    "& .MuiOutlinedInput-root": {
+                        borderRadius: 8,
+                        backgroundColor: "#FFFFFF",
+                        "& fieldset": { borderColor: "#E2E8F0" },
+                        "&:hover fieldset": { borderColor: "#CBD5E1" },
+                    },
                 },
             },
         },

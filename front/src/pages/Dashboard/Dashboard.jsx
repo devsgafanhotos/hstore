@@ -58,18 +58,18 @@ export default function Dashboard() {
 
             <Box
                 sx={{
-                    display: "grid",
-                    gridTemplateColumns: { sx: "1fr", md: "1fr 1fr" },
+                    display: "flex",
+                    flexFlow: "wrap",
                     gap: 1,
                 }}
             >
                 {/* Recent Sales */}
-                <Box>
+                <Box sx={{flex: "auto"}}>
                     <FaturacoesRecentes />
                 </Box>
 
                 {/* Sidebar Widgets (Stock Alerts) */}
-                <Box>
+                <Box sx={{flex: "auto"}}>
                     <AgentesDestacados />
                 </Box>
             </Box>

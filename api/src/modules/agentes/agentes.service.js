@@ -5,7 +5,7 @@ const { agentes: agents_model, usuarios: user_model } = getModels();
 class classAgentServices {
     async cadastrar(agente) {
         const responseAgenteID = await this.verifyAgentAgenteID(
-            agente.id_agente
+            agente.id_agente,
         );
 
         if (responseAgenteID.success) {
@@ -30,7 +30,7 @@ class classAgentServices {
         }
 
         const responseTelefone = await this.verifyAgentTelefone(
-            agente.telefone
+            agente.telefone,
         );
 
         if (responseTelefone.success) {
@@ -67,12 +67,12 @@ class classAgentServices {
                 ["id_agente", "id"],
                 "nome",
                 "telefone",
-                ["data_criacao", "dataCadastro"],
+                ["data_criacao", "data"],
                 [col("usuario.nome"), "cadastradoPor"],
             ],
             where: idCondition,
             include: [{ model: user_model, as: "usuario", attributes: [] }],
-            order: [["data_criacao", "DESC"]],
+            order: [["nome", "ASC"]],
         });
 
         if (!agentes_encontrados) {

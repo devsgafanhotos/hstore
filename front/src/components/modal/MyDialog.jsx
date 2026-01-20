@@ -31,7 +31,7 @@ export default function MyDialog({
                         mb: 1,
                     }}
                 />
-                <Typography variant="h6" sx={{ textAlign: "center", mb: 1 }}>
+                <Typography variant="h5" sx={{ textAlign: "center", mb: 1 }}>
                     {title}
                 </Typography>
             </>
@@ -58,7 +58,7 @@ export default function MyDialog({
             >
                 <Box sx={{ p: 2 }}>
                     <MyDialogTitle />
-                    <Divider sx={{ mb: 2 }} />
+                    <Divider sx={{ mb: 2, mt: 2 }} />
                     <MyDialogContent />
                 </Box>
             </Dialog>

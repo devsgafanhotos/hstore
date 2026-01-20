@@ -24,6 +24,7 @@ import { LuFishOff, LuFishSymbol } from "react-icons/lu";
 const iconMapper = {
     "id": FaIdCard,
     "telefone": Phone,
+    "data": CalendarMonth,
     "dataCadastro": CalendarMonth,
     "cadastradoPor": FaUserCheck,
     "nome": People,

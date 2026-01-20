@@ -1,43 +1,51 @@
 import { Op, where, col, fn, literal } from "sequelize";
+import { getModels } from "../../config/postgresqlClient.js";
+const { agentes: agent_model, faturacoes: faturacoes_model } = getModels();
 
 class classPagamentosUtilFunctios {
     async getFaturacoesPrimeiraQuinzena(ano, mes) {
-        const faturacoesPrimeiraQuinzena = await Faturacao.findAll({
+        const faturacoesPrimeiraQuinzena = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
+                
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Quinzenal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")),
-                    ano,
-                    fn("MONTH", col("data_faturacao")),
-                    mes,
-                    literal("DAY(data_faturacao) BETWEEN 1 AND 15"),
+                    where(fn("YEAR", col("data_faturacao")), ano,),
+                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("DAY", col("data_faturacao")), {
+                        [Op.between]: [1, 15],
+                    }),
+                    where(col("forma_pagamento"), "Quinzenal"),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
 
         return faturacoesPrimeiraQuinzena;
     }
     async getPendentesPrimeiraQuinzena(ano, mes) {
-        const dataCorrespondente = new Date(ano, mes - 1, 1);
-        const pendentesPrimeiraQuinzena = await Faturacao.findAll({
+        const dataCorrespondente = `${ano}-${mes >= 10 ? mes : "0" + mes}-01`;
+        const pendentesPrimeiraQuinzena = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Quinzenal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")),
-                    ano,
-                    fn("MONTH", col("data_faturacao")),
-                    mes,
-                    literal("DAY(data_faturacao) BETWEEN 1 AND 15"),
+                    where(fn("YEAR", col("data_faturacao")), ano,),
+                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("DAY", col("data_faturacao")), {
+                        [Op.between]: [1, 15],
+                    }),
+                    where(col("forma_pagamento"), "Quinzenal"),
                     literal(`
         NOT EXISTS (
           SELECT 1
@@ -45,55 +53,70 @@ class classPagamentosUtilFunctios {
           WHERE
             p.agente_id = faturacoes.agente_id
             AND p.parcela = 'Primeira'
-            AND p.data_correspondente = '${dataCorrespondente
-                            .toISOString()
-                            .slice(0, 10)}'
+            AND p.data_correspondente = '${dataCorrespondente}'
         )
       `),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
+        
+        pendentesPrimeiraQuinzena.map((pendente) => {
+            const resume = this.__getResume(pendente?.totalFaturado);
+            pendente["data"] = dataCorrespondente;
+            pendente["parcela"] = "Primeira";
+            pendente["resto"] = resume.resto;
+            pendente["caixas"] = resume.caixas;
+            pendente["bonus"] = resume.bonus;
+        })
 
         return pendentesPrimeiraQuinzena;
     }
 
-
-
     async getFaturacoesSegundaQuinzena(ano, mes) {
-        const faturacoesSegundaQuinzena = await Faturacao.findAll({
+        const faturacoesSegundaQuinzena = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Quinzenal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")), ano,
-                    fn("MONTH", col("data_faturacao")), mes,
-                    literal("DAY(data_faturacao) BETWEEN 16 AND 31"),
+                    where(fn("YEAR", col("data_faturacao")), ano,),
+                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("DAY", col("data_faturacao")), {
+                        [Op.between]: [16, 31],
+                    }),
+                    where(col("forma_pagamento"), "Quinzenal"),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
 
         return faturacoesSegundaQuinzena;
     }
     async getPendentesSegundaQuinzena(ano, mes) {
-        const dataCorrespondente = new Date(ano, mes - 1, 1);
-        const pendentesSegundaQuinzena = await Faturacao.findAll({
+        const dataCorrespondente = `${ano}-${mes >= 10 ? mes : "0" + mes}-01`;
+        const pendentesSegundaQuinzena = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Quinzenal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")), ano,
-                    fn("MONTH", col("data_faturacao")), mes,
-                    literal("DAY(data_faturacao) BETWEEN 16 AND 31"),
+                    where(fn("YEAR", col("data_faturacao")), ano,),
+                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("DAY", col("data_faturacao")), {
+                        [Op.between]: [16, 31],
+                    }),
+                    where(col("forma_pagamento"), "Quinzenal"),
                     literal(`
         NOT EXISTS (
           SELECT 1
@@ -101,53 +124,64 @@ class classPagamentosUtilFunctios {
           WHERE
             p.agente_id = faturacoes.agente_id
             AND p.parcela = 'Segunda'
-            AND p.data_correspondente = '${dataCorrespondente
-                            .toISOString()
-                            .slice(0, 10)}'
+            AND p.data_correspondente = '${dataCorrespondente}'
         )
       `),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
+
+        pendentesSegundaQuinzena.map((pendente) => {
+            const resume = this.__getResume(pendente?.totalFaturado);
+            pendente["data"] = dataCorrespondente;
+            pendente["parcela"] = "Segunda";
+            pendente["resto"] = resume.resto;
+            pendente["caixas"] = resume.caixas;
+            pendente["bonus"] = resume.bonus;
+        })
 
         return pendentesSegundaQuinzena;
     }
 
-
-
     async getFaturacoesMensais(ano, mes) {
-        const faturacoesMensais = await Faturacao.findAll({
+        const faturacoesMensais = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Mensal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")), ano,
-                    fn("MONTH", col("data_faturacao")), mes,
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
+                    where(col("forma_pagamento"), "Mensal"),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
 
         return faturacoesMensais;
     }
     async getPendentesMensais(ano, mes) {
-        const dataCorrespondente = new Date(ano, mes - 1, 1);
-        const pendentesMensais = await Faturacao.findAll({
+        const dataCorrespondente = `${ano}-${mes >= 10 ? mes : "0" + mes}-01`;
+        const pendentesMensais = await faturacoes_model.findAll({
             attributes: [
                 "agente_id",
-                [fn("SUM", col("valor")), "total_faturado"],
+                [fn("SUM", col("valor")), "totalFaturado"],
+                [col("agente.nome"), "agente"],
             ],
+            group: ["agente_id"],
             where: {
-                forma_pagamento: "Mensal",
                 [Op.and]: [
-                    fn("YEAR", col("data_faturacao")), ano,
-                    fn("MONTH", col("data_faturacao")), mes,
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
+                    where(col("forma_pagamento"), "Mensal"),
                     literal(`
         NOT EXISTS (
           SELECT 1
@@ -155,18 +189,50 @@ class classPagamentosUtilFunctios {
           WHERE
             p.agente_id = faturacoes.agente_id
             AND p.parcela = 'Única'
-            AND p.data_correspondente = '${dataCorrespondente
-                            .toISOString()
-                            .slice(0, 10)}'
+            AND p.data_correspondente = '${dataCorrespondente}'
         )
       `),
                 ],
             },
-            group: ["agente_id"],
+            include: [{ model: agent_model, as: "agente", attributes: [] }],
+            order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
 
+        pendentesMensais.map((pendente) => {
+            const resume = this.__getResume(pendente?.totalFaturado);
+            pendente["data"] = dataCorrespondente;
+            pendente["parcela"] = "Única";
+            pendente["resto"] = resume.resto;
+            pendente["caixas"] = resume.caixas;
+            pendente["bonus"] = resume.bonus;
+        })
+
         return pendentesMensais;
+    }
+
+    __getResume(totalFaturado) {
+        const resumo = {
+            bonus: 0.0,
+            resto: 0.0,
+            caixas: 0,
+        };
+
+        if (totalFaturado == 0) {
+            return resumo;
+        } else if (totalFaturado % 12500 === 0) {
+            resumo.caixas = totalFaturado / 25000;
+            resumo.bonus = (totalFaturado / 25000) * 1800;
+            resumo.resto = 0;
+        } else {
+            // Pegamos o múltiplo de 12500 menor e mais próximo
+            const multiplo = Math.floor(totalFaturado / 12500) * 12500;
+            resumo.caixas = multiplo / 25000;
+            resumo.bonus = (multiplo / 25000) * 1800;
+            resumo.resto = totalFaturado - multiplo;
+        }
+
+        return resumo;
     }
 }
 

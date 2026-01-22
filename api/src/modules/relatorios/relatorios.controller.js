@@ -1,14 +1,24 @@
+import { hoje } from "../../shared/utils/date.js";
 import RelatoriosServices from "./relatorios.service.js";
 
 class ClassRelatoriosControllers {
-    cadastrar = async (req, res, next) => {
+    getRelatorio = async (req, res, next) => {
         try {
-            const relatorio = req.body;
+            const {
+                data = hoje,
+                tipo = "Diario",
+                nome_agente = null,
+                forma_pagamento = null,
+            } = req.query;
 
-            const response = await RelatoriosServices.cadastrar({
-                ...relatorio,
-                usuario_id: req.user.id,
-            });
+            const response = await RelatoriosServices.getRelatorio(
+                {
+                    data,
+                    tipo,
+                    nome_agente,
+                    forma_pagamento,
+                }
+            );
 
             // Em caso de insucesso
             if (!response.success) {

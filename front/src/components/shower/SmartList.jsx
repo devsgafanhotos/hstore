@@ -232,9 +232,10 @@ export function MyListItem({ listItem, handleClick, index, title }) {
                             }
                             textAlign={"right"}
                         >
-                            {listItem?.valor && !listItem?.parcela
-                                ? getMoeda(listItem?.valor)
-                                : listItem?.id}
+                            {(listItem?.valor && !listItem?.parcela)
+                                && getMoeda(listItem?.valor)}
+
+                            {!title.includes("Pagamentos") && listItem?.id}
                         </Typography>
                     </div>
                     {listItem?.parcela && (

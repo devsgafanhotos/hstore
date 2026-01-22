@@ -74,7 +74,7 @@ class classFaturacoesServices {
             id_faturacao,
             tipo_faturacao,
             forma_pagamento,
-            limit = 600,
+            limit = 1000,
         },
     ) {
         const agenteEncontrado = await agent_model.findOne({

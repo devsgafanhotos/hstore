@@ -16,13 +16,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { api } from "../../api/axios";
 import SmartList, { getMoeda } from "../../components/shower/SmartList";
-import { FaFileInvoiceDollar, FaPlus, FaQuestion } from "react-icons/fa6";
+import { FaFileInvoiceDollar, FaQuestion } from "react-icons/fa6";
 import { FaFilter } from "react-icons/fa";
 import MyDialog from "../../components/modal/MyDialog";
 import { useAction } from "../../hooks/useAction";
 import { useCache } from "../../hooks/useCache";
 import { amanha, hoje } from "../../utils/date";
 import { useAlert } from "../../hooks/useAlert";
+import ResumeCard from "../../components/shower/ResumeCard";
+import { ReceiptText, Wallet } from "lucide-react";
 
 export default function Faturacoes() {
     const { setAlert } = useAlert();
@@ -47,7 +49,7 @@ export default function Faturacoes() {
 
     async function getFaturacoes(params) {
         try {
-            setPageState("loading")
+            setPageState("loading");
             const { data } = await api.get("/fat/faturacoes", {
                 params: {
                     dataInicio: new Date(params.dataInicio),
@@ -61,14 +63,16 @@ export default function Faturacoes() {
             setFilterValue({ ...params });
             return setFaturacoes([...data.data]);
         } catch (error) {
-            alert(error?.message)
+            alert(
+                `${error?.message} || Erro ao efeituar busca, tente novamente!`,
+            );
             setAlert({
                 type: "SHOW",
-                text: error?.message,
-                style: "warning",
+                text: `${error?.message} || Erro ao efeituar busca, tente novamente!`,
+                style: "error",
             });
             console.log(error);
-            setFaturacoes([]);
+            setFaturacoes([...initialFaturacoes]);
         } finally {
             setPageState("done");
         }
@@ -80,9 +84,9 @@ export default function Faturacoes() {
     };
 
     useEffect(() => {
-        setFaturacoes([...initialFaturacoes]);
-        setPageState("done");
-    }, [initialFaturacoes]);
+        getFaturacoes(filterValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     function MyToolIcon({
         title = "Title",
@@ -199,15 +203,19 @@ export default function Faturacoes() {
                 ) : (
                     <>
                         {resumes && (
-                            <Box sx={{padding: 4}}>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Typography variant="caption" sx={{fontSize: "1rem"}}>Total Vendido: </Typography>
-                                    <Typography variant="body2" sx={{fontSize: "1rem", fontWeight: 600}}> {getMoeda(resumes?.totalVendido || 0)} </Typography>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Typography variant="caption" sx={{fontSize: "1rem"}}>Total de Faturações: </Typography>
-                                    <Typography variant="body2" sx={{fontSize: "1rem", fontWeight: 600}}> {resumes?.total || 0} </Typography>
-                                </div>
+                            <Box sx={{ }}>
+                                <ResumeCard
+                                    title="Receita Total"
+                                    value={getMoeda(resumes?.totalVendido || 0)}
+                                    icon={Wallet}
+                                    color="#10b981" // Verde Esmeralda
+                                />
+                                <ResumeCard
+                                    title="Total de Faturações"
+                                    value={resumes?.total || 0}
+                                    icon={ReceiptText}
+                                    color="#6366f1" // Indigo
+                                />
                             </Box>
                         )}
                     </>

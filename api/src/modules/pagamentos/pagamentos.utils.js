@@ -9,13 +9,12 @@ class classPagamentosUtilFunctios {
                 "agente_id",
                 [fn("SUM", col("valor")), "totalFaturado"],
                 [col("agente.nome"), "agente"],
-                
             ],
             group: ["agente_id"],
             where: {
                 [Op.and]: [
-                    where(fn("YEAR", col("data_faturacao")), ano,),
-                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
                     where(fn("DAY", col("data_faturacao")), {
                         [Op.between]: [1, 15],
                     }),
@@ -40,8 +39,8 @@ class classPagamentosUtilFunctios {
             group: ["agente_id"],
             where: {
                 [Op.and]: [
-                    where(fn("YEAR", col("data_faturacao")), ano,),
-                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
                     where(fn("DAY", col("data_faturacao")), {
                         [Op.between]: [1, 15],
                     }),
@@ -62,7 +61,13 @@ class classPagamentosUtilFunctios {
             order: [[col("agente.nome"), "ASC"]],
             raw: true,
         });
-        
+
+        const meta = {
+            totalBonusPendente: 0,
+            totalCaixasPendente: 0,
+            totalRestoPendente: 0,
+            total: pendentesPrimeiraQuinzena.length,
+        };
         pendentesPrimeiraQuinzena.map((pendente) => {
             const resume = this.__getResume(pendente?.totalFaturado);
             pendente["data"] = dataCorrespondente;
@@ -70,9 +75,14 @@ class classPagamentosUtilFunctios {
             pendente["resto"] = resume.resto;
             pendente["caixas"] = resume.caixas;
             pendente["bonus"] = resume.bonus;
-        })
 
-        return pendentesPrimeiraQuinzena;
+            meta.totalBonusPendente += Number(resume?.bonus);
+            meta.totalCaixasPendente += Number(resume?.caixas);
+            meta.totalRestoPendente += Number(resume?.bonus);
+        });
+
+        const response = {data: pendentesPrimeiraQuinzena, meta}
+        return response;
     }
 
     async getFaturacoesSegundaQuinzena(ano, mes) {
@@ -85,8 +95,8 @@ class classPagamentosUtilFunctios {
             group: ["agente_id"],
             where: {
                 [Op.and]: [
-                    where(fn("YEAR", col("data_faturacao")), ano,),
-                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
                     where(fn("DAY", col("data_faturacao")), {
                         [Op.between]: [16, 31],
                     }),
@@ -111,8 +121,8 @@ class classPagamentosUtilFunctios {
             group: ["agente_id"],
             where: {
                 [Op.and]: [
-                    where(fn("YEAR", col("data_faturacao")), ano,),
-                    where(fn("MONTH", col("data_faturacao")), mes,),
+                    where(fn("YEAR", col("data_faturacao")), ano),
+                    where(fn("MONTH", col("data_faturacao")), mes),
                     where(fn("DAY", col("data_faturacao")), {
                         [Op.between]: [16, 31],
                     }),
@@ -134,6 +144,12 @@ class classPagamentosUtilFunctios {
             raw: true,
         });
 
+        const meta = {
+            totalBonusPendente: 0,
+            totalCaixasPendente: 0,
+            totalRestoPendente: 0,
+            total: pendentesSegundaQuinzena.length,
+        };
         pendentesSegundaQuinzena.map((pendente) => {
             const resume = this.__getResume(pendente?.totalFaturado);
             pendente["data"] = dataCorrespondente;
@@ -141,9 +157,14 @@ class classPagamentosUtilFunctios {
             pendente["resto"] = resume.resto;
             pendente["caixas"] = resume.caixas;
             pendente["bonus"] = resume.bonus;
-        })
 
-        return pendentesSegundaQuinzena;
+            meta.totalBonusPendente += Number(resume?.bonus);
+            meta.totalCaixasPendente += Number(resume?.caixas);
+            meta.totalRestoPendente += Number(resume?.bonus);
+        });
+
+        const response = {data: pendentesSegundaQuinzena, meta}
+        return response;
     }
 
     async getFaturacoesMensais(ano, mes) {
@@ -199,6 +220,12 @@ class classPagamentosUtilFunctios {
             raw: true,
         });
 
+        const meta = {
+            totalBonusPendente: 0,
+            totalCaixasPendente: 0,
+            totalRestoPendente: 0,
+            total: pendentesMensais.length,
+        };
         pendentesMensais.map((pendente) => {
             const resume = this.__getResume(pendente?.totalFaturado);
             pendente["data"] = dataCorrespondente;
@@ -206,9 +233,14 @@ class classPagamentosUtilFunctios {
             pendente["resto"] = resume.resto;
             pendente["caixas"] = resume.caixas;
             pendente["bonus"] = resume.bonus;
-        })
 
-        return pendentesMensais;
+            meta.totalBonusPendente += Number(resume?.bonus);
+            meta.totalCaixasPendente += Number(resume?.caixas);
+            meta.totalRestoPendente += Number(resume?.bonus);
+        });
+
+        const response = {data: pendentesMensais, meta}
+        return response;
     }
 
     __getResume(totalFaturado) {

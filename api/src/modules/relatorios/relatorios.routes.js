@@ -3,10 +3,11 @@ import RelatoriossControllers from "./relatorios.controller.js";
 import { Router } from "express";
 const relatoriosRouter = Router();
 
-relatoriosRouter.post(
-    "/cadastrar",
+relatoriosRouter.get(
+    "/relatorio",
     AuthMiddleware.authanticateAccess,
-    RelatoriossControllers.cadastrar
+    AuthMiddleware.verifyRole(["Admin", "Normal"]),
+    RelatoriossControllers.getRelatorio
 );
 
 export default relatoriosRouter;

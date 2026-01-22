@@ -5,6 +5,18 @@ import PagamentosUtilFunctios from "./pagamentos.utils.js";
 
 class classPagamentosServices {
     async registrar(pagamentosPendente) {
+        /**
+         * [
+    {
+        "agente_id": "679306",
+        "usuario_id": "1",
+        "data_correspondente": "2025-10",
+        "parcela": "Segunda",
+        "resto": "11500",
+        "bonus": "900"
+    }
+]
+         */
         const pagamentosRegistrados =
             await pagamentos_model.bulkCreate(pagamentosPendente);
 
@@ -61,7 +73,6 @@ class classPagamentosServices {
                 parcela,
                 limit,
                 estado,
-                total: Number,
             },
             data: Array,
         };
@@ -78,7 +89,7 @@ class classPagamentosServices {
             responseObject.data = response.data;
             responseObject.success = response.success;
             responseObject.message = response?.message;
-            responseObject.meta["total"] = response.total;
+            responseObject.meta = { ...responseObject.meta, ...response.meta };
         } else if (estado === "Efeituados") {
             const response = await this.__getPagamentosEfeituados({
                 idAgente: idAgenteCondition,
@@ -91,7 +102,7 @@ class classPagamentosServices {
 
             responseObject.data = response.data;
             responseObject.success = response.success;
-            responseObject.meta["total"] = response.total;
+            responseObject.meta = { ...responseObject.meta, ...response.meta };
         } else {
             throw new Error("Parametro estado inválido!");
         }
@@ -136,17 +147,44 @@ class classPagamentosServices {
             include: [{ model: agent_model, as: "agente", attributes: [] }],
             order: [["data_correspondente", "DESC"]],
         });
-        if (!pagamentos_efeituados) {
-            return {
-                success: false,
-                data: [],
-            };
-        }
+
+        const totalBonus = await pagamentos_model.sum("bonus", {
+            where: {
+                [Op.and]: [
+                    where(fn("YEAR", col("data_correspondente")), ano),
+                    where(fn("MONTH", col("data_correspondente")), mes),
+                    idAgente,
+                    idPagamentoCondition,
+                    parcela,
+                ],
+            },
+            raw: true,
+        });
+
+        const totalResto = await pagamentos_model.sum("resto", {
+            where: {
+                [Op.and]: [
+                    where(fn("YEAR", col("data_correspondente")), ano),
+                    where(fn("MONTH", col("data_correspondente")), mes),
+                    idAgente,
+                    idPagamentoCondition,
+                    parcela,
+                ],
+            },
+            raw: true,
+        });
+
+        const meta = {
+            totalBonusPago: totalBonus,
+            //totalCaixasPago: 0,
+            totalResto: totalResto,
+            total: pagamentos_efeituados.length,
+        };
 
         return {
             success: true,
-            total: pagamentos_efeituados.length,
             data: pagamentos_efeituados,
+            meta
         };
     }
 
@@ -159,8 +197,8 @@ class classPagamentosServices {
     }) {
         const responseObject = {
             success: Boolean,
-            total: Number,
             data: Array,
+            meta: Object,
         };
 
         let isPeriodoPagamento = true;
@@ -200,27 +238,30 @@ class classPagamentosServices {
                     ano,
                     mes,
                 );
-                responseObject["success"] = !!data;
-                responseObject["total"] = data.length;
-                responseObject["data"] = data;
+
+                responseObject["success"] = !!data.data;
+                responseObject["meta"] = data.meta;
+                responseObject["data"] = data.data;
             } else if (parcela === "Primeira") {
                 const data =
                     await PagamentosUtilFunctios.getPendentesPrimeiraQuinzena(
                         ano,
                         mes,
                     );
-                responseObject["success"] = !!data;
-                responseObject["total"] = data.length;
-                responseObject["data"] = data;
+
+                responseObject["success"] = !!data.data;
+                responseObject["meta"] = data.meta;
+                responseObject["data"] = data.data;
             } else if (parcela === "Segunda") {
                 const data =
                     await PagamentosUtilFunctios.getPendentesSegundaQuinzena(
                         ano,
                         mes,
                     );
-                responseObject["success"] = !!data;
-                responseObject["total"] = data.length;
-                responseObject["data"] = data;
+
+                responseObject["success"] = !!data.data;
+                responseObject["meta"] = data.meta;
+                responseObject["data"] = data.data;
             } else {
                 responseObject["success"] = false;
                 responseObject["total"] = 0;
@@ -228,7 +269,7 @@ class classPagamentosServices {
             }
         } else {
             responseObject["success"] = false;
-            responseObject["total"] = 0;
+            responseObject["meta"] = {};
             responseObject["message"] = "Ainda não é período de pagamento!";
             responseObject["data"] = [];
         }

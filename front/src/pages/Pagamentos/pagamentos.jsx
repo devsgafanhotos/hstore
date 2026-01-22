@@ -16,12 +16,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { api } from "../../api/axios";
-import SmartList from "../../components/shower/SmartList";
+import SmartList, { getMoeda } from "../../components/shower/SmartList";
 import { FaFileInvoiceDollar, FaQuestion } from "react-icons/fa6";
 import { FaFilter } from "react-icons/fa";
 import MyDialog from "../../components/modal/MyDialog";
 import { useCache } from "../../hooks/useCache";
 import { useAlert } from "../../hooks/useAlert";
+import ResumeCard from "../../components/shower/ResumeCard";
+import { Wallet } from "lucide-react";
 
 export default function Pagamentos() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -66,7 +68,7 @@ export default function Pagamentos() {
             setFilterValue({ ...params });
             return setPagamentos({ data: data.data, meta: data.meta });
         } catch (error) {
-            alert(error?.message)
+            alert(error?.message);
             setAlert({
                 type: "SHOW",
                 text: error?.message,
@@ -198,48 +200,47 @@ export default function Pagamentos() {
                     />
                 ) : (
                     <>
-                        {/*resumes && (
-                            <Box sx={{ padding: 4 }}>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Typography
-                                        variant="caption"
-                                        sx={{ fontSize: "1rem" }}
-                                    >
-                                        Total Vendido:{" "}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            fontSize: "1rem",
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        {" "}
-                                        {getMoeda(
-                                            resumes?.totalVendido || 0,
-                                        )}{" "}
-                                    </Typography>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Typography
-                                        variant="caption"
-                                        sx={{ fontSize: "1rem" }}
-                                    >
-                                        Total de Faturações:{" "}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            fontSize: "1rem",
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        {" "}
-                                        {resumes?.total || 0}{" "}
-                                    </Typography>
-                                </div>
+                        {pagamentos?.meta && pagamentos?.data.length !== 0 ? (
+                            <Box sx={{}}>
+                                {Object.keys(pagamentos.meta).map((key) => {
+                                    if (
+                                        ![
+                                            "totalBonusPago",
+                                            "totalRestoPago",
+                                            "totalBonusPendente",
+                                            "totalCaixasPendente",
+                                            "totalRestoPendente",
+                                        ].includes(key)
+                                    )
+                                        return;
+
+                                    return (
+                                        <ResumeCard
+                                            title={
+                                                key?.at(0).toUpperCase() +
+                                                key.slice(1)
+                                            }
+                                            value={
+                                                key != "totalCaixasPendente"
+                                                    ? getMoeda(
+                                                          pagamentos.meta[key],
+                                                      )
+                                                    : pagamentos.meta[key]
+                                            }
+                                            icon={Wallet}
+                                            color="#10b981" // Verde Esmeralda
+                                        />
+                                    );
+                                })}
                             </Box>
-                        )*/}
+                        ) : (
+                            <ResumeCard
+                                title={"Sem resumos"}
+                                value={0}
+                                icon={FaQuestion}
+                                color="#ff0000"
+                            />
+                        )}
                     </>
                 )}
             </MyDialog>
